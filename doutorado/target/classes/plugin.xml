@@ -4,20 +4,109 @@
       <actionSet
             label="%action_set_label"
             visible="true"
-            id="doutorado.doutorado.actionSet">
+            id="projeto01.projeto.actionSet">
          <menu
-               id="doutorado"
+               id="projeto"
                label="%menu_group"
-               path="tool/doutorado">
+               path="tool/projeto">
          </menu>
          <action
-			   label="%menu_label"
-               icon="icons/sample.gif"
-               class="plugin.TemplateAction"
-               tooltip="%menu_tooltip"
-               menubarPath="tool/doutorado/"
-               id="doutorado">
-         </action>
+        label="%count_classes" 
+        class="corteste.TemplateAction"
+        tooltip="Count classes" 
+        menubarPath="tool/projeto/"
+        id="projeto.TemplateAction">
+      </action>
+      
+         <action
+        label="%valida" 
+        class="corteste.ValidaAction"
+        tooltip="valida classes" 
+        menubarPath="tool/projeto/"
+        id="projeto.ValidaAction">
+        </action>      
+     </actionSet>   
+   </extension>   
+     
+   <extension point="com.change_vision.astah.ui.actionSets">
+   
+     <actionSet
+            label="segundomenu"
+            visible="true"
+            id="segundomenu">
+            
+         <menu
+               id="component"
+               label="Basic Component"
+               path="tool/component">
+         </menu>
+     
+     
+       <action
+        label="New" 
+        class="corteste.TemplateBasicComponentAction"
+        tooltip="BasicComponent" 
+        menubarPath="tool/component/"
+        id="novoComponent">
+      </action>
+      
+      
      </actionSet>
+     
+   
+     
    </extension>
+   
+   
+   <extension point="com.change_vision.astah.ui.actionSets">
+   
+     <actionSet
+            label="terceiromenu"
+            visible="true"
+            id="terceiromenu">
+            
+         <menu
+               id="Hcomponent"
+               label="Hierarchical Component"
+               path="tool/Hcomponent">
+         </menu>
+     
+     
+       <action
+        label="New" 
+        class="corteste.TemplateHierarchicalComponentAction"
+        tooltip="HierarchicalComponent" 
+        menubarPath="tool/Hcomponent/"
+        id="novoHComponent">
+      </action>
+      
+      
+     </actionSet>
+     
+   
+     
+   </extension>
+   
+   
+   
+   
+   <extension point="com.change_vision.astah.ui.view">
+        <view
+            id="corteste.HelloWorldView"
+            type="extraTab"
+            class="corteste.HelloWorldView" />
+   </extension>
+   
+   
+   <extension point="com.change_vision.astah.ui.view">
+        <view
+            id="corteste.TabContrato"
+            type="extraTab"
+            class="corteste.TabContrato" />
+   </extension>
+   
+   
+   
+   
 </plugin>
+ 
