@@ -12,7 +12,7 @@
          </menu>
          <action
         label="%count_classes" 
-        class="corteste.TemplateAction"
+        class="plugin.TemplateAction"
         tooltip="Count classes" 
         menubarPath="tool/projeto/"
         id="projeto.TemplateAction">
@@ -20,7 +20,7 @@
       
          <action
         label="%valida" 
-        class="corteste.ValidaAction"
+        class="plugin.ValidaAction"
         tooltip="valida classes" 
         menubarPath="tool/projeto/"
         id="projeto.ValidaAction">
@@ -44,7 +44,7 @@
      
        <action
         label="New" 
-        class="corteste.TemplateBasicComponentAction"
+        class="plugin.TemplateBasicComponentAction"
         tooltip="BasicComponent" 
         menubarPath="tool/component/"
         id="novoComponent">
@@ -74,7 +74,7 @@
      
        <action
         label="New" 
-        class="corteste.TemplateHierarchicalComponentAction"
+        class="plugin.TemplateHierarchicalComponentAction"
         tooltip="HierarchicalComponent" 
         menubarPath="tool/Hcomponent/"
         id="novoHComponent">
@@ -92,17 +92,17 @@
    
    <extension point="com.change_vision.astah.ui.view">
         <view
-            id="corteste.HelloWorldView"
+            id="plugin.HelloWorldView"
             type="extraTab"
-            class="corteste.HelloWorldView" />
+            class="plugin.HelloWorldView" />
    </extension>
    
    
    <extension point="com.change_vision.astah.ui.view">
         <view
-            id="corteste.TabContrato"
+            id="plugin.TabContrato"
             type="extraTab"
-            class="corteste.TabContrato" />
+            class="plugin.TabContrato" />
    </extension>
    
    
