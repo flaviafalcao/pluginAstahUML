@@ -1206,8 +1206,9 @@ public class STMView {
 											String exp = SplitTriggerGuard(trs.get(j), string.trim(), name_comp,
 													trs.get(j).getId());
 											String[] expSplit = exp.split("->");
-											String newExp = exp.replace("!", "?");
-											temp = temp + newExp + " ->";
+											//String newExp = exp.replace("!", "?");
+											//temp = temp + newExp + " ->";
+											temp = temp + exp  + " ->";
 
 											// setar expressao que ficara na memoria
 											declaration.setMemoryExp(trs.get(j).getId(),  expSplit[0]);
@@ -1293,8 +1294,10 @@ public class STMView {
 									String exp = this.SplitTriggerGuard(trs.get(i), string.trim(), name_comp,
 											trs.get(i).getId());
 									String[] expSplit = exp.split("->");
-									String newExp = exp.replace("!", "?");
-									temp = temp + newExp + " ->";
+									//String newExp = exp.replace("!", "?");
+									//temp = temp + newExp + " ->";								
+									temp = temp + exp + " ->";
+
 
 									// setar expressao da memoria
 									declaration.setMemoryExp(trs.get(i).getId(), expSplit[0]);
