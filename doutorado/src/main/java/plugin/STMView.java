@@ -427,7 +427,7 @@ public class STMView {
 		String[] part_action;
 		String[] part_action3;
 		Declarations declaration = Declarations.getInstance();
-		
+
 		String indGuard = "";
 
 		if (trigger.contains(".")) {
@@ -440,13 +440,13 @@ public class STMView {
 			// retornar o obj porta com o nome part_action[0]
 
 			Port portTemp = declaration.getPort(part_action[0]);
-			
-			if(portTemp.isGuard()) {
-				
-				indGuard ="0.";
+
+			if (portTemp.isGuard()) {
+
+				indGuard = "0.";
 			}
-			
-			temp1 = temp1+ indGuard;
+
+			temp1 = temp1 + indGuard;
 
 			// se a segunda parte tem [ : ]
 			if (part_action[1].contains("(")) {
@@ -827,13 +827,11 @@ public class STMView {
 
 			part_action = action.split("\\.");
 			temp1 = part_action[0] + ".id."; // se a segunda parte tem [ : ]
-
 			tmp_index = part_action.length - 1;
 
 			// se length = 3 , fazer um get do elemento
 
 			if (part_action.length == 3) {
-
 				getFucIndice = "get_" + part_action[1] + ".id?" + part_action[1] + "->";
 				getNIndice = part_action[1] + ".";
 
@@ -872,124 +870,125 @@ public class STMView {
 				// verifica se signal ou operacao
 				String esteriotipo = op.getEsteriotipo();
 
-				// esteriotipo nao eh nulo
-				// if (esteriotipo!=null) {
-				// se nao eh signal
-				if (!esteriotipo.equalsIgnoreCase("async")) {
+				if (esteriotipo != null) {
 
-					// se a operacao tiver direction in
-					// o canal de entrada ou saida sera no primeiro evento
-					if (op.getDirection().equalsIgnoreCase("in")) {
+					if (!esteriotipo.equalsIgnoreCase("async")) {
 
-						// se parametro out
-						if (part_action3[0].equals("out")) {
+						// se a operacao tiver direction in
+						// o canal de entrada ou saida sera no primeiro evento
+						if (op.getDirection().equalsIgnoreCase("in")) {
 
-							temp3 = part_action3[1];
-							String set = this.getcontainVar(part_action3[1].trim(), cmpt);
-							temp1 = getFucIndice + temp1 + getNIndice + part_action2[0] + "_I" + "?" + temp3 + "" + "->"
-									+ settemp + temp1 + getNIndice + part_action2[0] + "_O";
+							// se parametro out
+							if (part_action3[0].equals("out")) {
 
-						}
-						// se parametro in
-						else if (part_action3[0].equals("in")) {
+								temp3 = part_action3[1];
+								String set = this.getcontainVar(part_action3[1].trim(), cmpt);
+								temp1 = getFucIndice + temp1 + getNIndice + part_action2[0] + "_I" + "?" + temp3 + ""
+										+ "->" + settemp + temp1 + getNIndice + part_action2[0] + "_O";
 
-							temp3 = part_action3[1];
-							// verifica se parte3 1 contem variavel
-							if (this.containVar(part_action3[1], cmpt)) {
+							}
+							// se parametro in
+							else if (part_action3[0].equals("in")) {
 
-								String get = this.getcontainVar(part_action3[1].trim(), cmpt);
-								getemp = "get_" + get + ".id?" + get + "->";
+								temp3 = part_action3[1];
+								// verifica se parte3 1 contem variavel
+								if (this.containVar(part_action3[1], cmpt)) {
+
+									String get = this.getcontainVar(part_action3[1].trim(), cmpt);
+									getemp = "get_" + get + ".id?" + get + "->";
+								}
+
+								temp1 = getemp + getFucIndice + temp1 + getNIndice + part_action2[0] + "_I" + "!"
+										+ temp3 + "->" + "" + temp1 + getNIndice + part_action2[0] + "_O";
+
 							}
 
-							temp1 = getemp + getFucIndice + temp1 + getNIndice + part_action2[0] + "_I" + "!" + temp3
-									+ "->" + "" + temp1 + getNIndice + part_action2[0] + "_O";
+							else {
+
+								temp1 = getFucIndice + temp1 + getNIndice + part_action[tmp_index] + "_I" + " ->" + " "
+										+ temp1 + getNIndice + part_action[tmp_index] + "_O"; //
+
+							}
+
+						}
+
+						// se a operacao tiver direction out
+						// o canal de entrada ou saida sera no primeiro evento
+
+						else if (op.getDirection().equalsIgnoreCase("out")) {
+
+							// se parametro out
+							if (part_action3[0].equals("out")) {
+
+								temp3 = part_action3[1];
+								String set = this.getcontainVar(part_action3[1].trim(), cmpt);
+								// settemp = "set_" + set + ".id!" + set + "->";
+								temp1 = getFucIndice + temp1 + getNIndice + part_action2[0] + "_I" + "->" + "" + temp1
+										+ getNIndice + part_action2[0] + "_O" + "?" + temp3;
+
+							}
+
+							// se parametro in
+							else if (part_action3[0].equals("in")) {
+
+								temp3 = part_action3[1];
+								// verifica se parte3 1 contem variavel
+								if (this.containVar(part_action3[1], cmpt)) {
+
+									String get = this.getcontainVar(part_action3[1].trim(), cmpt);
+									getemp = "get_" + get + ".id?" + get + "->";
+								}
+
+								temp1 = getemp + getFucIndice + temp1 + getNIndice + part_action2[0] + "_I" + "->" + ""
+										+ temp1 + getNIndice + part_action2[0] + "_O" + "!" + temp3;
+
+							}
 
 						}
 
 						else {
-
-							temp1 = getFucIndice + temp1 + getNIndice + part_action[tmp_index] + "_I" + " ->" + " "
-									+ temp1 + getNIndice + part_action[tmp_index] + "_O"; //
+							temp1 = getemp + getFucIndice + temp1 + getNIndice + part_action2[0] + "_I" + temp3 + "->"
+									+ "" + settemp + temp1 + getNIndice + part_action2[0] + "_O";
 
 						}
-
 					}
 
-					// se a operacao tiver direction out
-					// o canal de entrada ou saida sera no primeiro evento
-
-					else if (op.getDirection().equalsIgnoreCase("out")) {
-
-						// se parametro out
-						if (part_action3[0].equals("out")) {
-
-							temp3 = part_action3[1];
-							String set = this.getcontainVar(part_action3[1].trim(), cmpt);
-							// settemp = "set_" + set + ".id!" + set + "->";
-							temp1 = getFucIndice + temp1 + getNIndice + part_action2[0] + "_I" + "->" + "" + temp1
-									+ getNIndice + part_action2[0] + "_O" + "?" + temp3;
-
-						}
-
-						// se parametro in
-						else if (part_action3[0].equals("in")) {
-
-							temp3 = part_action3[1];
-							// verifica se parte3 1 contem variavel
-							if (this.containVar(part_action3[1], cmpt)) {
-
-								String get = this.getcontainVar(part_action3[1].trim(), cmpt);
-								getemp = "get_" + get + ".id?" + get + "->";
-							}
-
-							temp1 = getemp + getFucIndice + temp1 + getNIndice + part_action2[0] + "_I" + "->" + ""
-									+ temp1 + getNIndice + part_action2[0] + "_O" + "!" + temp3;
-
-						}
-
-					}
+					// }
 
 					else {
-						temp1 = getemp + getFucIndice + temp1 + getNIndice + part_action2[0] + "_I" + temp3 + "->" + ""
-								+ settemp + temp1 + getNIndice + part_action2[0] + "_O";
 
-					}
-				}
+						if (!op.getDirection().isEmpty()) {
 
-				else {
+							// se parametro out
+							if (part_action3[0].equals("out")) {
 
-					if (!op.getDirection().isEmpty()) {
-
-						// se parametro out
-						if (part_action3[0].equals("out")) {
-
-							temp3 = part_action3[1];
-							temp1 = temp1 + part_action2[0] + "" + "?" + temp3;
-						}
-
-						// se parametro out
-						if (part_action3[0].equals("in")) {
-
-							temp3 = part_action3[1];
-							// verifica se parte3 1 contem variavel
-							if (this.containVar(part_action3[1], cmpt)) {
-
-								String get = this.getcontainVar(part_action3[1].trim(), cmpt);
-								getemp = "get_" + get + ".id?" + get + "->";
+								temp3 = part_action3[1];
+								temp1 = temp1 + part_action2[0] + "" + "?" + temp3;
 							}
 
-							temp1 = getemp + temp1 + part_action2[0] + "!" + temp3;
+							// se parametro out
+							if (part_action3[0].equals("in")) {
 
+								temp3 = part_action3[1];
+								// verifica se parte3 1 contem variavel
+								if (this.containVar(part_action3[1], cmpt)) {
+
+									String get = this.getcontainVar(part_action3[1].trim(), cmpt);
+									getemp = "get_" + get + ".id?" + get + "->";
+								}
+
+								temp1 = getemp + temp1 + part_action2[0] + "!" + temp3;
+
+							}
 						}
 					}
+
 				}
-
 			}
-
 			else {
 
 				temp1 = getFucIndice + temp1 + getNIndice + part_action[tmp_index] + "_I" + " ->" + "" + temp1
-						+ getNIndice + part_action[tmp_index] + "_O"; // "_O"; versao com _I _O
+						+ getNIndice + part_action[tmp_index] + "_O"; // 
 
 			}
 
@@ -1142,12 +1141,11 @@ public class STMView {
 
 		// loop transicoes DA MAQUINA DE ESTADOS
 		for (int i = 0; i < trs.size(); i++) {
-			
-             //----------------------------------------------------------
+
+			// ----------------------------------------------------------
 			// se transicao inicial----------------------------------------
-			//-------------------------------------------------------------
-			
-			
+			// -------------------------------------------------------------
+
 			if (trs.get(i).getSource().startsWith("Initial")) {
 				String temp = "";
 				processoI = temp + trs.get(i).getTarget().replaceFirst("\n", "");
@@ -1179,15 +1177,15 @@ public class STMView {
 
 							String temp = "";
 
-							// -------------------- 
+							// --------------------
 							// verifica se há guarda para esta transicao
-							
+
 							memory = declaration.memoryID(trs.get(j).getId());
 							String memory_str = "";
 
-							if (!memory.isEmpty()) {   
+							if (!memory.isEmpty()) {
 
-								memory_str = memory + "-> ";   // insere a referencia a memoria
+								memory_str = memory + "-> "; // insere a referencia a memoria
 							}
 
 							// ------------------------ //SE HA TRIGGER -------------------------------
@@ -1206,12 +1204,12 @@ public class STMView {
 											String exp = SplitTriggerGuard(trs.get(j), string.trim(), name_comp,
 													trs.get(j).getId());
 											String[] expSplit = exp.split("->");
-											//String newExp = exp.replace("!", "?");
-											//temp = temp + newExp + " ->";
-											temp = temp + exp  + " ->";
+											// String newExp = exp.replace("!", "?");
+											// temp = temp + newExp + " ->";
+											temp = temp + exp + " ->";
 
 											// setar expressao que ficara na memoria
-											declaration.setMemoryExp(trs.get(j).getId(),  expSplit[0]);
+											declaration.setMemoryExp(trs.get(j).getId(), expSplit[0]);
 
 										} else {
 											temp = temp + this.SplitSet(string.trim(), name_comp) + " ->";
@@ -1257,7 +1255,6 @@ public class STMView {
 
 								}
 							}
-							
 
 							// verifica se ha parametro neste state
 							String str = getStateEntry(trs.get(j).getTarget().toString());
@@ -1294,10 +1291,9 @@ public class STMView {
 									String exp = this.SplitTriggerGuard(trs.get(i), string.trim(), name_comp,
 											trs.get(i).getId());
 									String[] expSplit = exp.split("->");
-									//String newExp = exp.replace("!", "?");
-									//temp = temp + newExp + " ->";								
+									// String newExp = exp.replace("!", "?");
+									// temp = temp + newExp + " ->";
 									temp = temp + exp + " ->";
-
 
 									// setar expressao da memoria
 									declaration.setMemoryExp(trs.get(i).getId(), expSplit[0]);
@@ -1323,7 +1319,7 @@ public class STMView {
 					// ----------------- action-----------------------------------------/
 
 					String[] action_temp2 = removeReturn(trs.get(i).getAction());
-					for (String string : action_temp2) { 
+					for (String string : action_temp2) {
 						string = string.replace('\n', ' ');
 						if (string.trim().length() > 0) {
 
@@ -1362,8 +1358,6 @@ public class STMView {
 
 					}
 
-			
-
 					processo = processoname + "(id" + param + ") = (" + temp_guard + temp
 							+ trs.get(i).getTarget().replaceFirst("\n", "") + "(id" + param_tg + "))" + escolha + "\n";
 
@@ -1371,8 +1365,6 @@ public class STMView {
 
 					guardTrigger = false;
 				}
-				
-				
 
 			}
 		}
@@ -1460,7 +1452,14 @@ public class STMView {
 
 	}
 
-	// funcao que verifica se na string ha uma variavel do componente
+	/**
+	 * 
+	 * funcao que verifica se na string ha uma variavel do componente
+	 * 
+	 * @param str
+	 * @param cmpt
+	 * @return
+	 */
 
 	public boolean containVar(String str, String cmpt) {
 		boolean retorno = false;
