@@ -124,7 +124,7 @@ public class ClassView { // {
 					if (temp.getStereotypes()[0].equalsIgnoreCase("BasicComponentClass")) {
 
 						if (temp.getPorts().length > 0) {
-							
+
 							for (int x = 0; x < temp.getPorts().length; x++) {
 
 								// inserir no array de portas
@@ -142,7 +142,7 @@ public class ClassView { // {
 										getTypeInterface(temp.getPorts()[x]), temp.getPorts()[x].getTypeModifier(),
 										this.getNameInterface(temp.getPorts()[x]), multiplicity, nr_multiplicity);
 								ports.add(temp_portA);
-								
+
 								multiplicity = false;
 								nr_multiplicity = 1;
 
@@ -948,18 +948,66 @@ public class ClassView { // {
 				IClass temp = (IClass) element3;
 
 				if (temp.getAttributes().length > 0) {
+					
 					for (int i = 0; i < temp.getAttributes().length; i++) {
+						
 						if (temp.getAttributes()[i].getAssociation() == null) {
 
 							// verificar se eh uma constante
 
 							if (temp.getAttributes()[i].isChangeable()) {
 
-								var = var + "type_" + temp.getAttributes()[i];
-
 								if (temp.getAttributes()[i].getInitialValue().length() > 0) {
 
-									var = var + "=" + temp.getAttributes()[i].getInitialValue() + "\n";
+									// verifica a necessidade de criar datatype
+									// se os valores nao forem inteiros
+									// {1..2}
+									boolean isInt = false;
+
+									String split_temp[] = temp.getAttributes()[i].getInitialValue()
+											.replaceAll("[{}]", "").split("[,.]");
+									
+									isInt = split_temp[0].matches ("^([+-]?\\d+)$");;
+								//	char arrrayCharTemp[] = split_temp[0].toCharArray();
+								//	isInt = Character.isDigit(arrrayCharTemp[0]);
+									String varData = ""; 
+
+									if (!isInt) {
+
+										varData = "datatype dt_" + temp.getAttributes()[i] +  " = ";
+										
+										String varTemp = "";
+
+										for (int j = 0; j < split_temp.length; j++) {
+											
+											
+
+											varTemp =  varTemp + split_temp[j];
+											
+											if( split_temp.length > (j+1)) { 
+											
+												varTemp = varTemp   + "|";
+												
+											}
+
+										}
+
+										var = var + varData + varTemp + "\n";
+
+										var = var + "type_" + temp.getAttributes()[i];
+
+										var = var + "=" + temp.getAttributes()[i].getInitialValue() + "\n";
+
+									}
+
+									else {
+
+										var = var + "=" + temp.getAttributes()[i].getInitialValue() + "\n";
+
+									}
+
+								//	var = var + "=" + temp.getAttributes()[i].getInitialValue() + "\n";
+									
 								} else {
 
 									var = var + "=" + temp.getAttributes()[i].getType().getName() + " \n";

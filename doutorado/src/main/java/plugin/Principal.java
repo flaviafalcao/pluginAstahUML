@@ -40,6 +40,7 @@ public class Principal {
 		String write = "";
 		boolean check = true;
 		boolean checkCTR = true;
+		String path ="";
 
 		try {
 
@@ -51,8 +52,11 @@ public class Principal {
 			String filemodelo = "modelo" + declaration.getNum() + ".csp";
 
 			nomeModelo = filemodelo;
+		
 			arquivo = new FileWriter(
 					new File("C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + filemodelo));
+					
+			    
 
 			ModeloAssertion modelocsp = new ModeloAssertion();
 
@@ -325,8 +329,9 @@ public class Principal {
 
 				checkCTR = checkRefinementIO(
 						"C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + verificaCTR);
+						
 
-			
+			 
 
 				wrapper = FdrWrapper.getInstance();
 
@@ -361,6 +366,10 @@ public class Principal {
 
 						Iterator iterator = ports_comp.iterator();
 						String porta = "";
+						
+						BasicComponent basic = declaration.getBasicComponentbyName(temp);
+						ArrayList<String> protocolNames = basic.getProtocolNames();
+
 
 						while (iterator.hasNext()) {
 
@@ -368,15 +377,13 @@ public class Principal {
 
 						}
 
-						BasicComponent basic = declaration.getBasicComponentbyName(temp);
-						ArrayList<String> protocolNames = basic.getProtocolNames();
-
+						
 						for (int l = 0; l < protocolNames.size(); l++) {
 
 							protocolName = protocolNames.get(l);
 
 							trace_lts = lts.protocolo(
-									"C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + filemodelo,
+									   "C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + filemodelo,
 									protocolName, porta);
 
 							String protocolId = "";
@@ -404,6 +411,7 @@ public class Principal {
 
 					arquivo2 = new FileWriter(new File(
 							"C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + fileName + ".csp"));
+							 // "C:/Users/flavi/git/pluginAstahUML/doutorado/src/main/resources/" + fileName + ".csp"));
 					write2 = write2 + map;
 					// monta protocolo
 
@@ -423,7 +431,7 @@ public class Principal {
 
 						check = checkRefinement(
 								"C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + assertion);
-
+							
 						if (!check) {
 							if (declaration.getIConnector(assertion + "") != null) {
 								conn = declaration.getIConnector(assertion + "");

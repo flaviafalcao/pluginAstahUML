@@ -493,7 +493,8 @@ public class Composition {
 							setsinc.get(0).getChannel2());
 					assertion3 = assertion3 + assertion3(processoanteriorname, setsinc.get(0).getChannel1(),
 							setsinc.get(0).getChannel2());
-					assertion4 = "assert " + processoanteriorname + ":[deadlock free [FD]] \n";
+					assertion4 =  "\n";
+							//"assert " + processoanteriorname + ":[deadlock free [FD]] \n";
 
 					String filename = "assertion" + declaration.getNum() + "" + i + ".csp";
 					assertionsModel.add(filename);
@@ -563,7 +564,8 @@ public class Composition {
 							setsinc.get(i).getChannel2());
 					assertion3 = assertion3(processoanteriorname, setsinc.get(i).getChannel1(),
 							setsinc.get(i).getChannel2());
-					assertion4 = "assert " + processoanteriorname + ":[deadlock free [FD]] \n";
+					assertion4 = "\n"; 
+							//"assert " + processoanteriorname + ":[deadlock free [FD]] \n";
 
 					// a cada conection colocar num novo arquivo
 					FileWriter arquivo;
@@ -1202,9 +1204,9 @@ public class Composition {
 
 				portTemp = declaration.getPort(porta_);
 
-				break;
+				//break;
 
-			}
+			//}
 			
 			// verifica se a porta tem guarda
 			
@@ -1283,7 +1285,7 @@ public class Composition {
 					rename = rename + "<- tag_" + porta_;
 					rename = "[[" + rename + "]]";
 
-					String protocolName = "temp_protocolo_" + type.get(i).getType() + "_" + j;
+					String protocolName = "temp_protocolo_" + type.get(i).getType() + porta_ + "_" + j;
 
 					temp_protocols = temp_protocols + "\n" + protocolName + "  = " + type.get(i).getType() + "0";
 
@@ -1338,7 +1340,7 @@ public class Composition {
 				rename = rename + "<- tag_" + porta_  + aux_guard2;
 				rename = "[[" + rename + "]]";
 
-				String protocolName = "temp_protocolo_" + type.get(i).getType();
+				String protocolName = "temp_protocolo_" + type.get(i).getType() + "_" +porta_;
 
 				temp_protocols = temp_protocols + "\n" + protocolName + "  = " + type.get(i).getType() + "0";
 
@@ -1350,9 +1352,9 @@ public class Composition {
 				temp_protocols = temp_protocols + rename + hide;
 
 				processoWBS = processoWBS + "processoWBS_" + type.get(i).getType() + " = " + " wbisim("
-						+ "temp_protocolo_" + type.get(i).getType() + ") " + "\n";
+						+ "temp_protocolo_" + type.get(i).getType() +  "_" +porta_ + ") " + "\n";
 
-				String WBSprotocolName = "processoWBS_" + type.get(i).getType();
+				String WBSprotocolName = "processoWBS_" + type.get(i).getType() + "_" + porta_;
 				basicComponent.getProtocolNames().add(WBSprotocolName);
 			}
 
@@ -1361,7 +1363,8 @@ public class Composition {
 			aux_ = "";
 			aux_guard = "";
 
-		}
+			}// loop porta
+		} // loop component
 
 		return tag;
 	}

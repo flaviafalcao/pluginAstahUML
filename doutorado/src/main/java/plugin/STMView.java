@@ -427,18 +427,16 @@ public class STMView {
 		String[] part_action;
 		String[] part_action3;
 		Declarations declaration = Declarations.getInstance();
-
 		String indGuard = "";
+		boolean cnst = false;
 
 		if (trigger.contains(".")) {
 
 			part_action = trigger.split("\\.");
-
 			temp1 = part_action[0] + ".id.";
 
 			// verifica se nesta porta ha guarda em outra transicao
 			// retornar o obj porta com o nome part_action[0]
-
 			Port portTemp = declaration.getPort(part_action[0]);
 
 			if (portTemp.isGuard()) {
@@ -455,11 +453,11 @@ public class STMView {
 				temp2 = part_action2[1].replaceAll("\\)", "");
 				part_action3 = temp2.split(":");
 
-				if (part_action3[0].equals("in")) {
+				if (part_action3[0].equals("in")) { // in
 
 					temp3 = part_action3[1];
 
-				} else if (part_action3[0].equals("out")) {
+				} else if (part_action3[0].equals("out")) { // out
 					temp3 = "!" + part_action3[1];
 
 					// verifica se parte3 1 contem variavel
@@ -468,7 +466,16 @@ public class STMView {
 						String get = this.getcontainVar(part_action3[1].trim(), cmpt);
 						getemp = "get_" + get + ".id?" + get + "->";
 					}
+
 				}
+
+				else {
+
+					temp3 = "." + part_action3[0];
+					cnst = true;
+				}
+
+				// fim verificacao tipo retorno
 
 				// ----------verificar se no action ha return com saida -----------------------
 
@@ -490,25 +497,36 @@ public class STMView {
 					if (!esteriotipo.equalsIgnoreCase("async")) {
 
 						// verifica a direcao do parametro
-						if (op.getDirection().equalsIgnoreCase("out")) {
-
+						if (op.getDirection().equalsIgnoreCase("out")) { // op out
 							// ha retorno
+
 							if (!retorno1.isEmpty()) {
 
 								getemp = "get_" + retorno1 + ".id?" + retorno1 + "->";
-								temp1 = temp1 + part_action2[0] + "_I" + temp3 + "->" + getemp + settemp + temp1
+
+								// temp1 = temp1 + part_action2[0] + "_I" + temp3 + "->" + getemp + settemp +
+								// temp1
+								// + part_action2[0] + "_O" + "!" + retorno1 + "";
+
+								temp1 = temp1 + part_action2[0] + "_I" + "->" + getemp + settemp + temp1
 										+ part_action2[0] + "_O" + "!" + retorno1 + "";
 
 							} else { // nao ha retorno
 
-								// verifica se parte3 1 contem variavel
-								if (this.containVar(part_action3[1], cmpt)) {
+								// se part_action_3 tem 2 elementos
 
-									String get = this.getcontainVar(part_action3[1].trim(), cmpt);
-									getemp = "get_" + get + ".id?" + get + "->";
+								// verifica se parte3 1 contem variavel
+								if (part_action3.length > 1) {
+									if (this.containVar(part_action3[1], cmpt)) {
+
+										String get = this.getcontainVar(part_action3[1].trim(), cmpt);
+										getemp = "get_" + get + ".id?" + get + "->";
+									}
+
 								}
 
-								temp1 = getemp + temp1 + part_action2[0] + temp3 + "" + "";
+								temp1 = getemp + temp1 + part_action2[0] + "_I" + "?" + temp3 + "->" + "" + temp1 +  part_action2[0]
+										+ "_O";
 
 							}
 
@@ -517,8 +535,14 @@ public class STMView {
 
 							if (!temp3.isEmpty()) {
 
-								temp1 = getemp + temp1 + part_action2[0] + "_I" + "?" + temp3 + "" + "->" + settemp
-										+ temp1 + part_action2[0] + "_O";
+								if (cnst) {
+									temp1 = getemp + temp1 + part_action2[0] + "_I" + temp3 + "" + "->" + settemp
+											+ temp1 + part_action2[0] + "_O";
+
+								} else {
+									temp1 = getemp + temp1 + part_action2[0] + "_I" + "?" + temp3 + "" + "->" + settemp
+											+ temp1 + part_action2[0] + "_O";
+								}
 							}
 
 						}
@@ -546,13 +570,13 @@ public class STMView {
 
 							} else { // nao ha retorno
 
-								// verifica se parte3 1 contem variavel
-								if (this.containVar(part_action3[1], cmpt)) {
+								if (part_action3.length > 1) {
+									if (this.containVar(part_action3[1], cmpt)) {
 
-									String get = this.getcontainVar(part_action3[1].trim(), cmpt);
-									getemp = "get_" + get + ".id?" + get + "->";
+										String get = this.getcontainVar(part_action3[1].trim(), cmpt);
+										getemp = "get_" + get + ".id?" + get + "->";
+									}
 								}
-
 								temp1 = getemp + temp1 + part_action2[0] + temp3 + "" + "";
 
 							}
@@ -568,8 +592,8 @@ public class STMView {
 						}
 
 						else {
-							temp1 = getemp + temp1 + part_action2[0] + "_I" + temp3 + "->" + settemp + temp1
-									+ part_action2[0] + "_O";
+							temp1 = getemp + temp1 + part_action2[0] + "_I" + temp3;
+							// + "->" + settemp + temp1 + part_action2[0] + "_O";
 						}
 
 					}
@@ -592,7 +616,9 @@ public class STMView {
 
 				}
 
-			} else {
+			} // fim if contain"("
+
+			else {
 
 				temp1 = temp1 + part_action[1] + "_I" + " ->" + temp1 + part_action[1] + "_O"; // "_O"; versao com _I _O
 
@@ -709,12 +735,22 @@ public class STMView {
 							}
 
 							// direcao in
-						} else if (op.getDirection().equalsIgnoreCase("in")) {
+						}
+
+						else if (op.getDirection().equalsIgnoreCase("in")) {
 
 							if (!temp3.isEmpty()) {
 
 								temp1 = getemp + temp1 + idMemory + "." + part_action2[0] + "_I" + "?" + temp3 + ""
 										+ "->" + settemp + temp1 + idMemory + "." + part_action2[0] + "_O";
+							}
+
+							else {
+
+								// trecho novo
+								temp1 = temp1 + idMemory + "." + part_action2[0] + "_I" + "->" + "get_" + retorno1
+										+ ".id?" + retorno1 + "->" + temp1 + idMemory + "." + part_action2[0] + "_O"
+										+ "!" + retorno1;
 							}
 
 						}
@@ -984,11 +1020,10 @@ public class STMView {
 					}
 
 				}
-			}
-			else {
+			} else {
 
 				temp1 = getFucIndice + temp1 + getNIndice + part_action[tmp_index] + "_I" + " ->" + "" + temp1
-						+ getNIndice + part_action[tmp_index] + "_O"; // 
+						+ getNIndice + part_action[tmp_index] + "_O"; //
 
 			}
 
