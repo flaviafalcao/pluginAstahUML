@@ -239,7 +239,7 @@ public class FdrWrapper {
 		try {
 			for (Object assertion : assertions) {
 				isRefinement = true;
-				System.out.print(assertion);
+			//	System.out.print(assertion);
 				invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
 				for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
 						"counterexamples", null, null)) {
@@ -252,7 +252,7 @@ public class FdrWrapper {
 				passed = (boolean) invokeProperty(assertion.getClass(), assertion, "passed", null, null);
 				result = passed;
 
-				System.out.print(" passed ->> " + passed);
+			System.out.print(" passed ->> " + passed);
 				System.out.println(" is refinement " + isRefinement);
 			}
 		} catch (InstantiationException | IllegalAccessException e) {

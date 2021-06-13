@@ -8,7 +8,7 @@ public class BasicComponent {
 	private String stm;
 	private String memory;	
 	private ArrayList<Attribute> var;	
-	private ArrayList<String> protocolNames = new ArrayList<String>();
+	private ArrayList<Protocol> protocols = new ArrayList<Protocol>();
 	
 		
 	
@@ -47,12 +47,12 @@ public class BasicComponent {
 	}
 
 
-	public ArrayList<String> getProtocolNames() {
-		return protocolNames;
+	public ArrayList<Protocol> getProtocols() {
+		return protocols;
 	}
 
 
-	public void setProtocolNames(ArrayList<String> protocolNames) {
-		this.protocolNames = protocolNames;
+	public void setProtocols(ArrayList<Protocol> protocols) {
+		this.protocols = protocols;
 	}
 }

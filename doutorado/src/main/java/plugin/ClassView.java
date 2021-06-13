@@ -1001,6 +1001,8 @@ public class ClassView { // {
 									}
 
 									else {
+										
+										var = var + "type_" + temp.getAttributes()[i];
 
 										var = var + "=" + temp.getAttributes()[i].getInitialValue() + "\n";
 
@@ -1009,6 +1011,8 @@ public class ClassView { // {
 								//	var = var + "=" + temp.getAttributes()[i].getInitialValue() + "\n";
 									
 								} else {
+									
+									
 
 									var = var + "=" + temp.getAttributes()[i].getType().getName() + " \n";
 								}

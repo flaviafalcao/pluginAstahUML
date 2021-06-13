@@ -493,8 +493,9 @@ public class Composition {
 							setsinc.get(0).getChannel2());
 					assertion3 = assertion3 + assertion3(processoanteriorname, setsinc.get(0).getChannel1(),
 							setsinc.get(0).getChannel2());
-					assertion4 =  "\n";
-							//"assert " + processoanteriorname + ":[deadlock free [FD]] \n";
+					assertion4 = "\n " ;
+					//+
+					//"assert " + processoanteriorname + ":[deadlock free [FD]] \n";
 
 					String filename = "assertion" + declaration.getNum() + "" + i + ".csp";
 					assertionsModel.add(filename);
@@ -517,13 +518,11 @@ public class Composition {
 
 					// criar assertion passando o nome da composicao e canais
 
-				}
-				else {
+				} else {
 
 					// criar contrado
 					contrato = this.contratoFeed(processoanteriorname, setsinc.get(i));
-					
-					
+
 					// verificar se a porta tem um id de guarda com triguer
 
 					String[] splitResult1 = setsinc.get(i).getChannel1().split("\\.");
@@ -544,14 +543,11 @@ public class Composition {
 
 						aux2 = ".0";
 					}
-					
-
-				
 
 					composition = composition + processcomp + " = " + processoanteriorname + "\n" + "[|{|"
-							+ setsinc.get(i).getChannel1() + aux1 + "," + setsinc.get(i).getChannel2() + aux2+ "|}|]" + "\n"
-							+ "BFIO_INIT(" + setsinc.get(i).getChannel1() + aux1 + "," + setsinc.get(i).getChannel2() + aux2 +  ")"
-							+ "\n \n";
+							+ setsinc.get(i).getChannel1() + aux1 + "," + setsinc.get(i).getChannel2() + aux2 + "|}|]"
+							+ "\n" + "BFIO_INIT(" + setsinc.get(i).getChannel1() + aux1 + ","
+							+ setsinc.get(i).getChannel2() + aux2 + ")" + "\n \n";
 
 					composition = composition + "\n" + " ---ctr_" + contrato + "\n";
 
@@ -564,8 +560,7 @@ public class Composition {
 							setsinc.get(i).getChannel2());
 					assertion3 = assertion3(processoanteriorname, setsinc.get(i).getChannel1(),
 							setsinc.get(i).getChannel2());
-					assertion4 = "\n"; 
-							//"assert " + processoanteriorname + ":[deadlock free [FD]] \n";
+					assertion4 = "\n" ; 
 
 					// a cada conection colocar num novo arquivo
 					FileWriter arquivo;
@@ -677,6 +672,11 @@ public class Composition {
 		String[] split = name.split("\\.");
 		return split[0] + "_" + split[1];
 
+	}
+
+	public String splitPortFromChannel(String name) {
+		String[] split = name.split("\\.");
+		return split[0];
 	}
 
 	public String lastProcessName() {
@@ -917,10 +917,11 @@ public class Composition {
 			componentName2 = o_channel2;
 		}
 
-		prot_imp = "PROT_IMP_" + str + "_" + splitChannel(channel1) + "= protocolo_" + componentName + "(" + channel1
-				+ ") \n" + "PROT_IMP_" + str + "_" + splitChannel(channel2) + "= protocolo_" + componentName2 + "("
-				+ channel2 + ") \n";
-		// System.out.println(prot_imp);
+		prot_imp = "PROT_IMP_" + str + "_" + splitChannel(channel1) + "= protocolo_" + componentName + "_"
+				+ this.splitPortFromChannel(channel1) + "(" + channel1 + ") " + "\n" + "PROT_IMP_" + str + "_"
+				+ splitChannel(channel2) + "= protocolo_" + componentName2 + "_" + this.splitPortFromChannel(channel2)
+				+ "(" + channel2 + ") \n";
+
 		return prot_imp;
 	}
 
@@ -1068,8 +1069,9 @@ public class Composition {
 		}
 
 		dual_prot_imp = "DUAL_PROT_IMP_" + str + "_" + splitChannel(channel1) + "= DUAL_PROT" + "_" + componentName
+				+ "_" + this.splitPortFromChannel(channel1) // porta
 				+ "(" + channel1 + ") \n" + "DUAL_PROT_IMP_" + str + "_" + splitChannel(channel2) + "= DUAL_PROT" + "_"
-				+ componentName2 + "(" + channel2 + ") \n\n";
+				+ componentName2 + "_" + this.splitPortFromChannel(channel2) + "(" + channel2 + ") \n\n";
 
 		// System.out.println(dual_prot_imp);
 
@@ -1183,10 +1185,9 @@ public class Composition {
 		String porta_ = "";
 		int num_internal = declaration.getMemory_num(); // verificar se ha acesso a memoria
 		String aux_ = "";
-		String aux_guard = ""; 
-		String aux_guard2 = ""; 
+		String aux_guard = "";
+		String aux_guard2 = "";
 		Port portTemp = null;
-		
 
 		for (int i = 0; i < type.size(); i++) { // para cada componente
 
@@ -1202,171 +1203,239 @@ public class Composition {
 
 				porta_ = (String) it_.next();
 
+				// outrasportas
+				String port_hidden = eliminaPortaAtual(ports_comp_, porta_);
+
 				portTemp = declaration.getPort(porta_);
 
-				//break;
+				// verifica se a porta tem guarda
 
-			//}
-			
-			// verifica se a porta tem guarda
-			
-			if(portTemp.isGuard()) {
-				
-				
-				aux_guard =".i";
-				
-				aux_guard2 = "|i :t_id ";
-			}
-			
+				if (portTemp.isGuard()) {
 
-			// channel auxiliar
-			tag = tag + "channel tag_" + porta_ + " :" + "operation" + "\n" + "";
+					aux_guard = ".i";
 
-			// HIDE
-			// esconder portas env
-			HashSet<String> ports_comp_env;
-			ports_comp_env = declaration.getPortComponenteEnv(temp_);
-			Iterator it_env = ports_comp_env.iterator();
-
-			String hide = "";
-
-			if ((num_internal - 1) > 0) {
-
-				hide = "internal";
-			}
-
-			if (ports_comp_env.size() > 0) {
-
-				hide = hide + ",";
-			}
-
-			while (it_env.hasNext()) {
-
-				String porta = (String) it_env.next();
-				hide = hide + porta;
-				if (it_env.hasNext()) {
-
-					hide = hide + ",";
+					aux_guard2 = "|i :t_id ";
 				}
-			}
 
-			// gets and sets de um componente
+				// channel auxiliar
+				tag = tag + "channel tag_" + porta_ + " :" + "operation" + "\n" + "";
 
-			BasicComponent tempBasic = declaration.getBasicComponentbyName(type.get(i).getType());
+				// HIDE
+				// esconder portas env
+				HashSet<String> ports_comp_env;
+				ports_comp_env = declaration.getPortComponenteEnv(temp_);
+				Iterator it_env = ports_comp_env.iterator();
 
-			ArrayList<Attribute> tempVar = tempBasic.getVar();
+				String hide = "";
 
-			if (tempVar.size() > 0) {
-				hide = hide + ",";
+				if ((num_internal - 1) > 0) {
 
-			}
+					hide = "internal";
+				}
 
-			for (int j = 0; j < tempVar.size(); j++) {
-
-				hide = hide + "get_" + tempVar.get(j).getName() + "," + "set_" + tempVar.get(j).getName();
-
-				if (j < tempVar.size() - 1) {
+				if (ports_comp_env.size() > 0) {
 
 					hide = hide + ",";
 				}
 
-			}
+				while (it_env.hasNext()) {
 
+					String porta = (String) it_env.next();
+					hide = hide + porta;
+					if (it_env.hasNext()) {
 
-			String temp_protocols = "";
-			String processoWBS = "";
+						hide = hide + ",";
+					}
+				}
 
-			if (portTemp.isMulti()) {
+				// gets and sets de um componente
 
-				for (int j = 1; j <= portTemp.getNr_multi(); j++) {
+				BasicComponent tempBasic = declaration.getBasicComponentbyName(type.get(i).getType());
+
+				ArrayList<Attribute> tempVar = tempBasic.getVar();
+
+				if (tempVar.size() > 0) {
+					hide = hide + ",";
+
+				}
+
+				for (int j = 0; j < tempVar.size(); j++) {
+
+					hide = hide + "get_" + tempVar.get(j).getName() + "," + "set_" + tempVar.get(j).getName();
+
+					if (j < tempVar.size() - 1) {
+
+						hide = hide + ",";
+					}
+
+				}
+
+				String temp_protocols = "";
+				String processoWBS = "";
+
+				if (portTemp.isMulti()) {
+
+					for (int j = 1; j <= portTemp.getNr_multi(); j++) {
+
+						// RENAME
+						rename = porta_ + ".0" + "." + j;
+						rename = rename + "<- tag_" + porta_;
+						rename = "[[" + rename + "]]";
+
+						String protocolName = "temp_protocolo_" + type.get(i).getType() + porta_ + "_" + j;
+
+						temp_protocols = temp_protocols + "\n" + protocolName + "  = " + type.get(i).getType() + "0";
+
+						// esconder os outros canais
+
+						String hide_ = "";
+
+						for (int k = 1; k <= portTemp.getNr_multi(); k++) {
+
+							if (k != j) {
+
+								hide_ = hide_ + porta_ + ".0" + "." + k;
+
+							}
+
+							if ((k != j && k + 1 != j && k + 1 <= portTemp.getNr_multi())
+									|| (k != j && k + 1 == j && k + 2 <= portTemp.getNr_multi())) {
+
+								hide_ = hide_ + " , ";
+
+							}
+
+						}
+
+						String hide_temp = "";
+
+						if ((hide.length() > 0) && (hide_.length() > 0)) {
+
+							hide_temp = hide + ",";
+
+						}
+
+						if ((hide.length() > 0) || (hide_.length() > 0)) {
+
+							hide_temp = "\\" + "{|" + hide_temp + hide_ + "|} \n";
+						}
+
+						temp_protocols = temp_protocols + rename + hide_temp;
+
+						processoWBS = processoWBS + "processoWBS_" + type.get(i).getType() + "_" + j + " = " + ""
+								+ " wbisim(" + "temp_protocolo_" + type.get(i).getType() + "_" + j + ") " + "\n";
+
+						String WBSprotocolName = "processoWBS_" + type.get(i).getType() + "_" + j;
+
+						Protocol tempProtocol = new Protocol(WBSprotocolName, porta_);
+						basicComponent.getProtocols().add(tempProtocol);
+
+					}
+
+				} else {
+
+					
 
 					// RENAME
-					rename = porta_ + ".0" + "." + j ;
-					rename = rename + "<- tag_" + porta_;
+					rename = porta_ + ".0" + aux_guard;
+					rename = rename + "<- tag_" + porta_ + aux_guard2;
 					rename = "[[" + rename + "]]";
 
-					String protocolName = "temp_protocolo_" + type.get(i).getType() + porta_ + "_" + j;
+					String protocolName = "temp_protocolo_" + type.get(i).getType() + "_" + porta_;
 
 					temp_protocols = temp_protocols + "\n" + protocolName + "  = " + type.get(i).getType() + "0";
 
-					// esconder os outros canais
+					if (hide.length() > 0 &&  port_hidden.length() > 0) {
 
-					String hide_ = "";
+						hide = "\\" + "{|" + hide + ","+ port_hidden + "|} \n";
+					}
+					else if (hide.length() > 0 || port_hidden.length() > 0) {
 
-					for (int k = 1; k <= portTemp.getNr_multi(); k++) {
-
-						if (k != j) {
-
-							hide_ = hide_ + porta_ + ".0" + "." + k;
-
-						}
-
-						if ((k != j && k + 1 != j && k + 1 <= portTemp.getNr_multi())
-								|| (k != j && k + 1 == j && k + 2 <= portTemp.getNr_multi())) {
-
-							hide_ = hide_ + " , ";
-
-						}
-
+						hide = "\\" + "{|" + hide + port_hidden + "|} \n";
 					}
 
-					String hide_temp = "";
+					temp_protocols = temp_protocols + rename + hide;
 
-					if ((hide.length() > 0) && (hide_.length() > 0)) {
+					processoWBS = processoWBS + "processoWBS_" + type.get(i).getType() + "_" + porta_ + " = "
+							+ " wbisim(" + "temp_protocolo_" + type.get(i).getType() + "_" + porta_ + ") " + "\n";
 
-						hide_temp = hide + ",";
-
-					}
-
-					if ((hide.length() > 0) || (hide_.length() > 0)) {
-
-						hide_temp = "\\" + "{|" + hide_temp + hide_ + "|} \n";
-					}
-
-					temp_protocols = temp_protocols + rename + hide_temp;
-
-					processoWBS = processoWBS + "processoWBS_" + type.get(i).getType() + "_" + j + " = " + ""
-							+ " wbisim(" + "temp_protocolo_" + type.get(i).getType() + "_" + j + ") " + "\n";
-
-					String WBSprotocolName = "processoWBS_" + type.get(i).getType() + "_" + j;
-					basicComponent.getProtocolNames().add(WBSprotocolName);
+					String WBSprotocolName = "processoWBS_" + type.get(i).getType() + "_" + porta_;
+					Protocol tempProtocol = new Protocol(WBSprotocolName, porta_);
+					basicComponent.getProtocols().add(tempProtocol);
 
 				}
 
-			} else {
+				tag = tag + "\n" + temp_protocols + "\n" + processoWBS;
 
-				// RENAME
-				rename = porta_ + ".0"  + aux_guard;
-				rename = rename + "<- tag_" + porta_  + aux_guard2;
-				rename = "[[" + rename + "]]";
+				aux_ = "";
+				aux_guard = "";
 
-				String protocolName = "temp_protocolo_" + type.get(i).getType() + "_" +porta_;
-
-				temp_protocols = temp_protocols + "\n" + protocolName + "  = " + type.get(i).getType() + "0";
-
-				if (hide.length() > 0) {
-
-					hide = "\\" + "{|" + hide + "|} \n";
-				}
-
-				temp_protocols = temp_protocols + rename + hide;
-
-				processoWBS = processoWBS + "processoWBS_" + type.get(i).getType() + " = " + " wbisim("
-						+ "temp_protocolo_" + type.get(i).getType() +  "_" +porta_ + ") " + "\n";
-
-				String WBSprotocolName = "processoWBS_" + type.get(i).getType() + "_" + porta_;
-				basicComponent.getProtocolNames().add(WBSprotocolName);
-			}
-
-			tag = tag + "\n" + temp_protocols + "\n" + processoWBS;
-
-			aux_ = "";
-			aux_guard = "";
-
-			}// loop porta
+			} // loop porta
 		} // loop component
 
 		return tag;
+	}
+
+	private String eliminaPortaAtual(HashSet<String> ports_comp_, String portaAtual) {
+
+		String retorno = "";
+		
+		HashSet<String> clone = (HashSet<String>) ports_comp_.clone();
+
+		Object array[] = clone.toArray();
+
+		Object array2[] = new Object[array.length - 1];
+
+		int j = 0;
+
+		for (int i = 0; i < array.length; i++) {
+
+			String element = (String) array[i];
+
+			if (!element.equals(portaAtual)) {
+
+				array2[j] = element;
+				j++;
+			}
+
+		}
+
+		// HashSet<String> modifica = ports_comp_;
+		// modifica.remove(portaAtual);
+
+		// for (Iterator<String> iterator = ports_comp_.iterator(); iterator.hasNext();)
+		// {
+		// String value = iterator.next();
+		// if (value.equals(portaAtual)) {
+		//iterator.remove();
+		// }
+		// }
+
+		// while (it_.hasNext()) {
+		// String temp = (String) it_.next();
+		// if (temp.equals(portaAtual)) {
+
+		// it_.remove();
+
+		// }
+
+		// }
+
+	
+
+		for (int k = 0; k < array2.length; k++)
+
+		{
+			retorno = retorno + (String) array2[k];
+
+			if (k < array2.length - 1) {
+
+				retorno = retorno + ",";
+			}
+
+		}
+
+		return retorno;
 	}
 
 //cria um basicComponent
@@ -1543,25 +1612,29 @@ public class Composition {
 		ArrayList<ComponentType> type = declaration.getComponentType();
 
 		String protocolName = "";
+		String portName = "";
 
 		for (int i = 0; i < type.size(); i++) {
 
 			BasicComponent component = declaration.getBasicComponentbyName(type.get(i).getType());
-			ArrayList<String> protocolNames = component.getProtocolNames();
+			ArrayList<Protocol> protocols = component.getProtocols();
 
-			for (int l = 0; l < protocolNames.size(); l++) {
+			for (int l = 0; l < protocols.size(); l++) {
 
-				protocolName = protocolNames.get(l);
+				protocolName = protocols.get(l).getProcessName();
+				portName = protocols.get(l).getPortName();
 
 				String protocolId = "";
 
 				protocolId = protocolName.replaceAll("[^0-9.]", "");
 
-				dual = dual + "DUAL_PROT_" + type.get(i).getType() + protocolId + "(ch)  = dual_wb_protocolo_"
-						+   type.get(i).getType() + protocolId + "[[w <- ch]] \n";
+				dual = dual + "DUAL_PROT_" + type.get(i).getType() + "_" + portName + protocolId
+						+ "(ch)  = dual_wb_protocolo_" + type.get(i).getType() + "_" + portName + protocolId
+						+ "[[w <- ch]] \n";
 
-				dual = dual + " protocolo_" + type.get(i).getType() + protocolId + "(ch)  = wb_protocolo_"
-						+ type.get(i).getType() + protocolId + "[[w <- ch]] \n";
+				dual = dual + " protocolo_" + type.get(i).getType() + "_" + portName + protocolId
+						+ "(ch)  = wb_protocolo_" + type.get(i).getType() + "_" + portName + protocolId
+						+ "[[w <- ch]] \n \n";
 
 			}
 

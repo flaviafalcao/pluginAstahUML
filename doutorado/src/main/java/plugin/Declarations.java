@@ -313,7 +313,12 @@ public class Declarations {
 			if (this.portas.get(i).getName().equalsIgnoreCase(name)) {
 
 				retorno = portas.get(i);
-				break;
+				
+				if(retorno.isGuard()) {
+					
+					break;
+				}
+				
 			}
 		}
 
@@ -331,7 +336,7 @@ public class Declarations {
 			if (this.portas.get(i).getName().equalsIgnoreCase(name)) {
 
 				this.portas.get(i).setGuard(true);
-				;
+				
 
 			}
 		}

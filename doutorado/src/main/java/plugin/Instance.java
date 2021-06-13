@@ -1,5 +1,7 @@
 package plugin;
 
+import java.util.ArrayList;
+
 public class Instance {
 	
 	private String name;
@@ -7,6 +9,7 @@ public class Instance {
 	private int num_id;
 	private String input_name;
 	private String output_name;	
+	private ArrayList<String> portas;
 	
 	
 	public Instance(String name, String type, int num_id) {
@@ -46,6 +49,16 @@ public class Instance {
 	}
 	public void setOutput_name(String output_name) {
 		this.output_name = output_name;
+	}
+
+
+	public ArrayList<String> getPortas() {
+		return portas;
+	}
+
+
+	public void setPortas(ArrayList<String> portas) {
+		this.portas = portas;
 	}
 	
 	

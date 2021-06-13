@@ -138,11 +138,6 @@ public class CompositeView {
 
 			count = declaration.countComponentType(declaration.getType(name));
 
-			
-			str = str + name + " = " + declaration.getType(name) + "(" + count + ") \n";
-			Instance nova = new Instance(name, declaration.getType(name), count);
-			instancias.add(nova);
-
 			// instancia contrato
 			// recupera o contrato com o nome do tipo
 
@@ -155,6 +150,12 @@ public class CompositeView {
 			ArrayList<String> op = recuperado.getOp();
 
 			ArrayList<relac_op_port> relacao = recuperado.getRelacao();
+
+			str = str + name + " = " + declaration.getType(name) + "(" + count + ") \n";
+			Instance nova = new Instance(name, declaration.getType(name), count);
+
+			nova.setPortas(portas);
+			instancias.add(nova);
 
 			// adiciona contrato instancia
 
@@ -354,7 +355,6 @@ public class CompositeView {
 						for (int m = 0; m < memory.size(); m++) {
 
 							// verifica se ha trigger associada a memory
-
 							if (memory.get(m).getTrigger()[0].trim().length() > 0) {
 
 								getset = getset + memory.get(m).getStr_guard() + " & " + memory.get(m).getExp() + " -> "
@@ -391,11 +391,9 @@ public class CompositeView {
 		}
 		return getset + "\n";
 	}
-	
-	
-	
+
 	/**
-	 *   Channel ports
+	 * Channel ports
 	 * 
 	 * 
 	 * @return
@@ -451,12 +449,8 @@ public class CompositeView {
 								strIndex = "";
 								typeIndex = "";
 								guardStr = "";
-								
-								
-								
-								// setar o indicativo de guarda da porta 
 
-								
+								// setar o indicativo de guarda da porta
 
 							}
 
@@ -782,7 +776,13 @@ public class CompositeView {
 		}
 	}
 
-/// cria instancia zero para verificar se o processo do componente eh um i/o processs
+	/**
+	 * 
+	 * cria instancia zero para verificar se o processo do componente eh um i/o
+	 * processs
+	 * 
+	 * @return
+	 */
 
 	public String montaInstanciaTeste() { // verificar os componentes basicos
 
@@ -800,10 +800,26 @@ public class CompositeView {
 				if (temp.getStereotypes().length > 0) {
 					if (temp.getStereotypes()[0].equalsIgnoreCase("BasicComponentClass")) {
 
-						// System.out.println("type ->> " + temp.getName());
 						str = str + temp.getName() + "0 =" + temp.getName() + "(0) \n";
 
 						Instance nova = new Instance(temp.getName() + "0", temp.getName(), 0);
+
+						// buscar as portas
+						ArrayList<String> portas= new ArrayList<String>() ;
+						if (temp.getPorts().length > 0) {
+							
+							for (int x = 0; x < temp.getPorts().length; x++) {
+								
+								String portName = temp.getPorts()[x].getName();
+								portas.add(portName);
+								
+							}
+
+
+						
+						
+						}
+                        nova.setPortas(portas);
 						instancias.add(nova);
 						//
 

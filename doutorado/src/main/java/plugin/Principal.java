@@ -40,10 +40,26 @@ public class Principal {
 		String write = "";
 		boolean check = true;
 		boolean checkCTR = true;
-		String path ="";
+		String path = "";
 
 		try {
 
+		//	long tempoInicial1 = System.currentTimeMillis();
+			
+		//	System.out.println("----------Leader ---------------");
+			
+		//	checkRefinement(
+		//			"C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/modelo_LSE_2.csp");
+			
+		//	long tempofinal2 = System.currentTimeMillis() - tempoInicial1;
+			
+		//	System.out.printf("%.3f ms%n",  tempofinal2/ 1000d);
+			
+		//	System.out.println("");
+			
+		//	System.out.println("----------Leader---------------");
+			
+			
 			conditions.resetMessage(); // reseta todas as mensagens
 
 			ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
@@ -52,11 +68,9 @@ public class Principal {
 			String filemodelo = "modelo" + declaration.getNum() + ".csp";
 
 			nomeModelo = filemodelo;
-		
+
 			arquivo = new FileWriter(
 					new File("C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + filemodelo));
-					
-			    
 
 			ModeloAssertion modelocsp = new ModeloAssertion();
 
@@ -130,6 +144,7 @@ public class Principal {
 
 			/* composite */
 			CompositeView c = new CompositeView();
+			
 			write = "-------------canais das portas-----------------" + "\n";
 
 			String channelPort = c.getChannelPort();
@@ -259,11 +274,11 @@ public class Principal {
 							+ "MFDR(q1,T) = M(q1,T) \\ {tau}  \n "
 							+ "-----------------------------------------------------------------------------------------"
 							+ "------------------------------------------------------------------------------------------"
-							+ "--------mapping an LTS to dual protocol ---------------------------------------------------" +"\n"
-							+ "MDUAL(q1,T) = |~| ev : available(q1,T)  \n"
+							+ "--------mapping an LTS to dual protocol ---------------------------------------------------"
+							+ "\n" + "MDUAL(q1,T) = |~| ev : available(q1,T)  \n"
 							+ "         @ ( |~| q2 : next(q1,ev,T) @ ev -> MDUAL(q2,T) ) \n " + "\n"
 							+ "MFDRDUAL(q1,T) = MDUAL(q1,T) \\ {tau}  \n " + "\n"
-							+ "---------------------------------------------------------------" +"\n";
+							+ "---------------------------------------------------------------" + "\n";
 
 			ArrayList<ComponentType> type = declaration.getComponentType();
 			String protocolName = "";
@@ -329,9 +344,7 @@ public class Principal {
 
 				checkCTR = checkRefinementIO(
 						"C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + verificaCTR);
-						
-
-			 
+				        
 
 				wrapper = FdrWrapper.getInstance();
 
@@ -366,35 +379,34 @@ public class Principal {
 
 						Iterator iterator = ports_comp.iterator();
 						String porta = "";
-						
+
 						BasicComponent basic = declaration.getBasicComponentbyName(temp);
-						ArrayList<String> protocolNames = basic.getProtocolNames();
+						ArrayList<Protocol> protocolNames = basic.getProtocols();
 
+						// while (iterator.hasNext()) {
+						// porta = (String) iterator.next();
+						// }
 
-						while (iterator.hasNext()) {
-
-							porta = (String) iterator.next();
-
-						}
-
-						
 						for (int l = 0; l < protocolNames.size(); l++) {
 
-							protocolName = protocolNames.get(l);
+							protocolName = protocolNames.get(l).getProcessName();
+							
+							porta = protocolNames.get(l).getPortName();
 
 							trace_lts = lts.protocolo(
-									   "C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + filemodelo,
+									"C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + filemodelo,
 									protocolName, porta);
 
 							String protocolId = "";
 
 							protocolId = protocolName.replaceAll("[^0-9.]", "");
 
-							protocolo = protocolo + "wb_protocolo_" + type.get(k).getType() + protocolId + "= MFDR( "
-									+ lts.root() + ",{" + trace_lts + "}) \n";
+							protocolo = protocolo + "wb_protocolo_" + type.get(k).getType() + "_" + porta +  protocolId  + "= MFDR( "
+									+ lts.root() + ",{" + trace_lts + "}) \n \n ";
+
+							protocolo = protocolo + "dual_wb_protocolo_" + type.get(k).getType()  +"_" + porta + protocolId
+									+ "= MFDRDUAL( " + lts.root() + ",{" + trace_lts + "}) \n \n ";
 							
-							protocolo = protocolo  + "dual_wb_protocolo_" + type.get(k).getType() + protocolId + "= MFDRDUAL( "
-									+ lts.root() + ",{" + trace_lts + "}) \n"; ;
 
 						}
 
@@ -411,7 +423,8 @@ public class Principal {
 
 					arquivo2 = new FileWriter(new File(
 							"C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + fileName + ".csp"));
-							 // "C:/Users/flavi/git/pluginAstahUML/doutorado/src/main/resources/" + fileName + ".csp"));
+					// "C:/Users/flavi/git/pluginAstahUML/doutorado/src/main/resources/" + fileName
+					// + ".csp"));
 					write2 = write2 + map;
 					// monta protocolo
 
@@ -427,11 +440,16 @@ public class Principal {
 					assertions.add(filemodelo);
 					boolean check1;
 
+					
+					long tempoInicial = System.currentTimeMillis();
+					
 					for (String assertion : assertions) {
 
 						check = checkRefinement(
 								"C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + assertion);
-							
+
+
+											
 						if (!check) {
 							if (declaration.getIConnector(assertion + "") != null) {
 								conn = declaration.getIConnector(assertion + "");
@@ -439,6 +457,11 @@ public class Principal {
 							}
 						}
 					}
+					
+					long tempofinal = System.currentTimeMillis() - tempoInicial;
+					
+					System.out.printf("%.3f ms%n",  tempofinal/ 1000d);
+			       
 
 					///
 					// rever este codigo para gerar contra exemplo
@@ -499,7 +522,9 @@ public class Principal {
 		return retorno;
 	}
 
-	// verifica assertions
+	/*
+	 *  verifica assertions
+	 */
 	public boolean checkRefinement(String filename) {
 		boolean retorno = true;
 		wrapper = FdrWrapper.getInstance();
@@ -512,7 +537,7 @@ public class Principal {
 			retorno = wrapper.executeAssertions(assertions);
 			System.out.println(" numero de contra exemplos" + wrapper.getCounterExamples().size());
 			System.out.println("retorno" + retorno);
-
+//
 		}
 		return retorno;
 	}

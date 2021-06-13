@@ -245,11 +245,11 @@ public class STMView {
 
 		for (ITransition transition : transitions) {
 
-			HashMap<?, ?> items = transition.getPresentations()[0].getProperties();
+			// HashMap<?, ?> items = transition.getPresentations()[0].getProperties();
 
-			items.forEach((k, v) -> {
-				System.out.println(k + "--------" + v);
-			});
+			// items.forEach((k, v) -> {
+			// System.out.println(k + "--------" + v);
+			// });
 
 			// actions divididas por ;
 			String temp_action = transition.getAction().toString().replaceAll("\n", "");
@@ -301,11 +301,22 @@ public class STMView {
 
 		String[] part_action;
 		String[] actions;
+		String[] guard ;
+		boolean haGuarda = false;
 		Declarations declaration = Declarations.getInstance();
 		boolean multi = false;
 		for (int i = 0; i < trs.size(); i++) {
 
 			actions = removeReturn(trs.get(i).getAction());
+
+			guard = trs.get(i).getGuard();
+
+			if (guard[0].length() > 0) {
+
+				haGuarda = true;
+				System.out.println("HA GUARDA!!!");
+
+			}
 
 			if (actions.length > 0) {
 
@@ -331,6 +342,7 @@ public class STMView {
 
 								Port tempPort = new Port((String) part_action_temp[0], nome);
 								tempPort.setMulti(multi);
+								tempPort.setGuard(haGuarda);
 
 								declaration.addPort(tempPort);
 							}
@@ -370,10 +382,21 @@ public class STMView {
 
 		String[] part_action;
 		String[] actions;
+		String[] guard;
+		boolean haGuarda = false;
 		Declarations declaration = Declarations.getInstance();
 		for (int i = 0; i < trs.size(); i++) {
 
 			actions = trs.get(i).getTrigger();
+
+			guard = trs.get(i).getGuard();
+
+			if (guard[0].length() > 0) {
+
+				haGuarda = true;
+				System.out.println("HA GUARDA!!!");
+
+			}
 
 			for (int j = 0; j < actions.length; j++) {
 
@@ -387,7 +410,10 @@ public class STMView {
 						if (!part_action[0].trim().isEmpty()
 								&& (!declaration.getPortas().contains(new Port((String) part_action[0])))) {
 
-							declaration.addPort(new Port((String) part_action[0], nome));
+							Port portTemp = new Port((String) part_action[0], nome);
+							portTemp.setGuard(haGuarda);
+							declaration.addPort(portTemp);
+
 						}
 
 						if (part_action.length > 1) {
@@ -504,10 +530,6 @@ public class STMView {
 
 								getemp = "get_" + retorno1 + ".id?" + retorno1 + "->";
 
-								// temp1 = temp1 + part_action2[0] + "_I" + temp3 + "->" + getemp + settemp +
-								// temp1
-								// + part_action2[0] + "_O" + "!" + retorno1 + "";
-
 								temp1 = temp1 + part_action2[0] + "_I" + "->" + getemp + settemp + temp1
 										+ part_action2[0] + "_O" + "!" + retorno1 + "";
 
@@ -525,8 +547,19 @@ public class STMView {
 
 								}
 
-								temp1 = getemp + temp1 + part_action2[0] + "_I" + "?" + temp3 + "->" + "" + temp1 +  part_action2[0]
-										+ "_O";
+								if (cnst) {
+
+									temp1 = getemp + temp1 + part_action2[0] + "_I" + "->" + "" + temp1
+											+ part_action2[0] + "_O" + temp3;
+
+								}
+
+								else {
+
+									temp1 = getemp + temp1 + part_action2[0] + "_I" + "->" + "" + temp1
+											+ part_action2[0] + "_O" + "?" + temp3;
+
+								}
 
 							}
 
@@ -540,8 +573,13 @@ public class STMView {
 											+ temp1 + part_action2[0] + "_O";
 
 								} else {
-									temp1 = getemp + temp1 + part_action2[0] + "_I" + "?" + temp3 + "" + "->" + settemp
-											+ temp1 + part_action2[0] + "_O";
+									// temp1 = getemp + temp1 + part_action2[0] + "_I" + "?" + temp3 + "" + "->" +
+									// settemp
+									// + temp1 + part_action2[0] + "_O";
+
+									temp1 = getemp + temp1 + part_action2[0] + "_I" + "" + "->" + settemp + temp1
+											+ part_action2[0] + "_O" + "?" + temp3;
+
 								}
 							}
 
@@ -620,7 +658,7 @@ public class STMView {
 
 			else {
 
-				temp1 = temp1 + part_action[1] + "_I" + " ->" + temp1 + part_action[1] + "_O"; // "_O"; versao com _I _O
+				temp1 = temp1 + part_action[1] + "_I" + " ->" + temp1 + part_action[1] + "_O";
 
 			}
 
@@ -730,7 +768,11 @@ public class STMView {
 									getemp = "get_" + get + ".id?" + get + "->";
 								}
 
-								temp1 = getemp + temp1 + part_action2[0] + temp3 + "" + "";
+								// temp1 = getemp + temp1 + part_action2[0] + temp3 + "" + "";
+
+								// temp3 = "";
+								temp1 = getemp + temp1 + idMemory + "." + part_action2[0] + "_I" + temp3 + "->" + getemp
+										+ temp1 + idMemory + "." + part_action2[0] + "_O";
 
 							}
 
@@ -856,13 +898,29 @@ public class STMView {
 		int tmp_index = 0;
 		String getFucIndice = "";
 		String getNIndice = "";
-
+        String indGuard ="";
 		Declarations declaration = Declarations.getInstance();
 
 		if (action.contains(".")) {
 
 			part_action = action.split("\\.");
 			temp1 = part_action[0] + ".id."; // se a segunda parte tem [ : ]
+			
+			//se o canal tem guarda em alguma transition
+			
+			// retornar o obj porta com o nome part_action[0]
+		     Port portTemp = declaration.getPort(part_action[0]);
+
+			if (portTemp.isGuard()) {
+
+				indGuard = "0.";
+			}
+
+			temp1 = temp1 + indGuard;
+
+
+			
+			
 			tmp_index = part_action.length - 1;
 
 			// se length = 3 , fazer um get do elemento
@@ -1102,7 +1160,17 @@ public class STMView {
 		if (this.containVar(part_action2[1].trim(), cmpt)) {
 			// retorna a variavel
 			String get = this.getcontainVar(part_action2[1].trim(), cmpt);
-			retorno = "get_" + get + ".id?" + get + "->";
+			//
+			// separa as variaveis
+			String[] getsplit = get.split("\\.");
+
+			for (int i = 0; i < getsplit.length; i++) {
+
+				retorno = retorno + "get_" + getsplit[i] + ".id?" + getsplit[i] + "->";
+
+			}
+
+			// retorno = "get_" + get + ".id?" + get + "->";
 		}
 
 		retorno = retorno + "set_" + part_action2[0].trim() + ".id!" + part_action2[1].trim();
@@ -1239,8 +1307,6 @@ public class STMView {
 											String exp = SplitTriggerGuard(trs.get(j), string.trim(), name_comp,
 													trs.get(j).getId());
 											String[] expSplit = exp.split("->");
-											// String newExp = exp.replace("!", "?");
-											// temp = temp + newExp + " ->";
 											temp = temp + exp + " ->";
 
 											// setar expressao que ficara na memoria
@@ -1523,8 +1589,10 @@ public class STMView {
 
 			if (str.contains(atributos.get(i).getName())) {
 
-				retorno = atributos.get(i).getName();
-				break;
+				retorno = retorno + atributos.get(i).getName();
+
+				retorno = retorno + ".";
+				// break;
 			}
 		}
 
