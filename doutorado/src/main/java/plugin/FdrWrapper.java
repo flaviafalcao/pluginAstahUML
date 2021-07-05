@@ -202,6 +202,7 @@ public class FdrWrapper {
 
 	public List<no> getpath() {
 		System.out.println(path.size());
+		
 
 		return this.path;
 	}

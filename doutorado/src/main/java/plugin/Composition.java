@@ -14,7 +14,7 @@ import com.change_vision.jude.api.inf.model.IPort;
 
 public class Composition {
 
-	private static ArrayList<Processo> interleaves = new ArrayList<Processo>();
+	private static ArrayList<ProcessoInterleave> interleaves = new ArrayList<ProcessoInterleave>();
 
 	public int getTypeInterface(IPort port) {
 
@@ -27,6 +27,11 @@ public class Composition {
 		return retorno;
 	}
 
+	/**
+	 * 
+	 * 
+	 * @param connector
+	 */
 	public void firstConection(IConnector connector) {
 
 		Declarations declaration = Declarations.getInstance();
@@ -193,6 +198,11 @@ public class Composition {
 	}
 
 //observar dependencia de c.firstConection
+	/**
+	 * 
+	 * 
+	 * @return
+	 */
 
 	public String getOutputComponent() {
 
@@ -255,9 +265,6 @@ public class Composition {
 
 			if (declaration.getIsProvReq(temp) == 1) {
 
-				// str_optype = declaration.getType(instance_temp.getName()) +"_I" ; //versao
-				// anterior
-
 				str_optype = instance_temp.getType() + "_I";
 
 			} else if (declaration.getIsProvReq(temp) == 0) {
@@ -277,6 +284,13 @@ public class Composition {
 	/**********************************************/
 //rotina que informa de qual componente  a porta
 
+	/**
+	 * 
+	 * 
+	 * @param porta
+	 * @return
+	 */
+
 	public String getComponentOwner(String porta) {
 		String retorno = "";
 		Declarations declaration = Declarations.getInstance();
@@ -295,6 +309,12 @@ public class Composition {
 	/********************************************************/
 	/**** o interleave sempre deve ser feito dois a dois ***/
 
+	/**
+	 * 
+	 * 
+	 * @return
+	 */
+
 	public String interleaveProcess() {
 
 		// faco o interleave dois a dois
@@ -309,39 +329,45 @@ public class Composition {
 			hash.add(instances.get(i).getName());
 		}
 
-		Iterator iterator = hash.iterator();
+		Iterator iterator = hash.iterator(); // iterator de instancias
 
 		ArrayList<String> temp = new ArrayList<String>();
 
 		while (iterator.hasNext()) {
 
-			temp.add((String) iterator.next());
+			temp.add((String) iterator.next()); // adiciona instancias no array
 
 		}
 
 		String interleave = "";
-		Processo ps;
+		ProcessoInterleave ps;
 		int index = 1;
 
-		if (temp.size() == 1) {
+		if (temp.size() == 1) { // so ha uma instancia no componente, entao o interleave eh ele proprio
 
-			ps = new Processo("processcomp", temp.get(0), index);
+			ps = new ProcessoInterleave("processcomp", temp.get(0), index, temp.get(0), "");
 
 			interleave = ps.montaString();
-			interleaves.add(ps);
+			interleaves.add(ps); // add no array interleaves
 		}
 
 		if (temp.size() >= 2) {
 
-			ps = interleave(temp.get(0), temp.get(1), index);
+			// monta o proceeso de interleave
+			ps = interleaveComposition(temp.get(0), temp.get(1), index);
 			interleave = ps.montaString();
 
 			interleaves.add(ps);
 
 			// contrato
 
-			Processo c1 = new Processo(temp.get(0), temp.get(0), 0);
-			Processo c2 = new Processo(temp.get(1), temp.get(1), 0);
+			ProcessoInterleave c1 = new ProcessoInterleave(temp.get(0), temp.get(0), 0);
+			ProcessoInterleave c2 = new ProcessoInterleave(temp.get(1), temp.get(1), 0);
+
+			interleave = interleave + "inputs_" + ps.name + "= union(inputs_" + temp.get(0) + ", inputs_" + temp.get(1)
+					+ ") \n";
+			interleave = interleave + "outputs_" + ps.name + "= union(outputs_" + temp.get(0) + ", outputs_"
+					+ temp.get(1) + ") \n";
 
 			contrato = this.contratoInterleave(c1.name, c2.name);
 
@@ -357,7 +383,7 @@ public class Composition {
 
 				// criar um novo processo
 				String tmp = ps.name;
-				ps = interleave(tmp, temp.get(j), index);
+				ps = interleaveComposition(tmp, temp.get(j), index);
 
 				interleave = interleave + "\n" + "-- ctr_" + this.contratoInterleave(tmp, temp.get(j)) + "\n";
 
@@ -366,7 +392,12 @@ public class Composition {
 				interleaves.add(ps);
 				interleave = interleave + ps.montaString();
 
-				System.out.println(interleave);
+				interleave = interleave + "inputs_" + ps.name + "= union(inputs_" + tmp + ", inputs_" + temp.get(j)
+						+ ") \n";
+				interleave = interleave + "outputs_" + ps.name + "= union(outputs_" + tmp + ", outputs_" + temp.get(j)
+						+ ") \n";
+
+				// System.out.println(interleave);
 
 				j++;
 
@@ -376,14 +407,30 @@ public class Composition {
 		return interleave;
 	}
 
-	public Processo interleave(String c1, String c2, int index) {
+	/**
+	 * 
+	 * 
+	 * @param c1
+	 * @param c2
+	 * @param index
+	 * @return
+	 */
+	public ProcessoInterleave interleaveComposition(String c1, String c2, int index) {
 
-		Processo retorno;
+		ProcessoInterleave retorno;
 
-		retorno = new Processo("inter_" + c1 + "_" + c2, c1 + " ||| " + c2 + "\n", index);
+		retorno = new ProcessoInterleave("inter_" + c1 + "_" + c2, c1 + " ||| " + c2 + "\n", index, c1, c2);
 
 		return retorno;
+
 	}
+
+	/**
+	 * 
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 
 	public String doComposition() throws IOException {
 
@@ -401,11 +448,12 @@ public class Composition {
 		String processcomp = "";
 		String processoanteriorname = "";
 
-		if (setsinc.isEmpty()) {
+		if (setsinc.isEmpty()) { // n ha ligacao entre componentes
 
 			processcomp = "";
 
 			composition = processcomp + interleaveProcess();
+
 			String filename = "assertion" + declaration.getNum() + "_interleave" + ".csp";
 			assertionsModel.add(filename);
 			// AssertionConection ac = new AssertionConection(filename,
@@ -435,8 +483,6 @@ public class Composition {
 			// ultima composition interleave
 
 			String nomeprocesso = lastProcessName();
-
-			// System.out.println(nomeprocesso);
 
 			processcomp = "processcomp";
 
@@ -489,13 +535,16 @@ public class Composition {
 
 					assertion1 = assertion1 + assertion1(processoanteriorname, setsinc.get(0).getChannel1(),
 							setsinc.get(0).getChannel2());
+					
 					assertion2 = assertion2 + assertion2(processoanteriorname, setsinc.get(0).getChannel1(),
 							setsinc.get(0).getChannel2());
+					
 					assertion3 = assertion3 + assertion3(processoanteriorname, setsinc.get(0).getChannel1(),
 							setsinc.get(0).getChannel2());
-					assertion4 = "\n " ;
-					//+
-					//"assert " + processoanteriorname + ":[deadlock free [FD]] \n";
+					
+					assertion4 = "\n ";
+					// +
+					// "assert " + processoanteriorname + ":[deadlock free [FD]] \n";
 
 					String filename = "assertion" + declaration.getNum() + "" + i + ".csp";
 					assertionsModel.add(filename);
@@ -560,7 +609,7 @@ public class Composition {
 							setsinc.get(i).getChannel2());
 					assertion3 = assertion3(processoanteriorname, setsinc.get(i).getChannel1(),
 							setsinc.get(i).getChannel2());
-					assertion4 = "\n" ; 
+					assertion4 = "\n";
 
 					// a cada conection colocar num novo arquivo
 					FileWriter arquivo;
@@ -603,8 +652,14 @@ public class Composition {
 		}
 		Iterator iterator = hash.iterator();
 
+		int j = instances.size();
+		ArrayList<String> instanceTemp = new ArrayList<String>();
+		int k = 0;
+
 		while (iterator.hasNext()) {
 			String name = (String) iterator.next();
+
+			instanceTemp.add(name);
 
 			// assert cell(1):[divergence free [FD] ]
 			// assert cell(1) :[deadlock free]
@@ -612,13 +667,34 @@ public class Composition {
 
 			assertion = assertion + "assert " + name + " :[divergence free [FD] ]" + "\n" + "assert " + name
 					+ " :[deadlock free]" + "\n";
-			// +
-			// "assert " + name + " :[deterministic ] " + "\n";
+
+		}
+
+		String str = "";
+
+		for (int i = 0; i < interleaves.size(); i++) {
+
+			ProcessoInterleave tmp = interleaves.get(i);
+
+			String c1 = tmp.component1;
+			String c2 = tmp.component2;
+
+			if (!instanceTemp.contains(c1)) {
+
+				str = str + "events_" + c1 + "=  union ( inputs_" + c1 + ", " + "outputs_" + c1 + ") \n";
+
+			}
+
+			if (!instanceTemp.contains(c2)) {
+				str = str + "events_" + c2 + "=  union ( inputs_" + c2 + ", " + "outputs_" + c2 + ") \n";
+			}
+
+			str = str + "assert STOP [T= RUN( inter (events_" + c1 + "," + "events_" + c2 + ")) " + "\n";
 
 		}
 		// process = process;
 
-		return assertion;
+		return assertion + str;
 
 	}
 
@@ -917,10 +993,31 @@ public class Composition {
 			componentName2 = o_channel2;
 		}
 
+		// verifica se a porta tem multiplicidade
+
+		String[] tmpChannel1 = channel1.split("\\.");
+		Declarations declaration = Declarations.getInstance();
+		Port tmpPort = declaration.getPort(tmpChannel1[0]);
+
+		String nrDual1 = "";
+		if (tmpPort.isMulti()) {
+
+			nrDual1 = tmpChannel1[2];
+		}
+
+		String[] tmpChannel2 = channel2.split("\\.");
+		Port tmpPort2 = declaration.getPort(tmpChannel2[0]);
+
+		String nrDual2 = "";
+		if (tmpPort2.isMulti()) {
+
+			nrDual2 = tmpChannel2[2];
+		}
+
 		prot_imp = "PROT_IMP_" + str + "_" + splitChannel(channel1) + "= protocolo_" + componentName + "_"
-				+ this.splitPortFromChannel(channel1) + "(" + channel1 + ") " + "\n" + "PROT_IMP_" + str + "_"
+				+ this.splitPortFromChannel(channel1) + nrDual1 + "(" + channel1 + ") " + "\n" + "PROT_IMP_" + str + "_"
 				+ splitChannel(channel2) + "= protocolo_" + componentName2 + "_" + this.splitPortFromChannel(channel2)
-				+ "(" + channel2 + ") \n";
+				+ nrDual2 + "(" + channel2 + ") \n";
 
 		return prot_imp;
 	}
@@ -1068,22 +1165,50 @@ public class Composition {
 			componentName2 = o_channel2;
 		}
 
+		// verifica se a porta tem multiplicidade
+
+		String[] tmpChannel1 = channel1.split("\\.");
+		Declarations declaration = Declarations.getInstance();
+		Port tmpPort = declaration.getPort(tmpChannel1[0]);
+
+		String nrDual1 = "";
+		if (tmpPort.isMulti()) {
+
+			nrDual1 = tmpChannel1[2];
+		}
+
+		String[] tmpChannel2 = channel2.split("\\.");
+		Port tmpPort2 = declaration.getPort(tmpChannel2[0]);
+
+		String nrDual2 = "";
+		if (tmpPort2.isMulti()) {
+
+			nrDual2 = tmpChannel2[2];
+		}
+
 		dual_prot_imp = "DUAL_PROT_IMP_" + str + "_" + splitChannel(channel1) + "= DUAL_PROT" + "_" + componentName
-				+ "_" + this.splitPortFromChannel(channel1) // porta
-				+ "(" + channel1 + ") \n" + "DUAL_PROT_IMP_" + str + "_" + splitChannel(channel2) + "= DUAL_PROT" + "_"
-				+ componentName2 + "_" + this.splitPortFromChannel(channel2) + "(" + channel2 + ") \n\n";
+				+ "_" + this.splitPortFromChannel(channel1) + nrDual1// porta
+				+ "(" + channel1 + ") \n" + "" + "DUAL_PROT_IMP_" + str + "_" + splitChannel(channel2) + "= DUAL_PROT"
+				+ "_" + componentName2 + "_" + this.splitPortFromChannel(channel2) + nrDual2 + "(" + channel2
+				+ ") \n\n";
 
 		// System.out.println(dual_prot_imp);
 
 		return dual_prot_imp;
 
 	}
+	
+	
+	
+	
 
 	public String functionDefault() {
 
 		String function = "";
 
-		function = "-----CIO funnction \n" + "channel out \n" + "channel in \n" + "channel mid \n" + "channel o \n \n"
+		function = "-----CIO funnction "
+				+ "\n"
+				+ "channel out \n" + "channel in \n" + "channel mid \n" + "channel o \n \n"
 				+ "CP(a,b) = a -> b -> CP(a,b) \n"
 				+ "C(a, P) = (P[[ a <- mid ]] [| {| mid |} |] CP(a,mid)) \\ {|mid|} \n"
 				+ "CIO(P) = C(in, C(out, P)) \n \n "
@@ -1101,23 +1226,31 @@ public class Composition {
 	}
 
 	// ---- D.6: Protocols are Strong Compatible
+	
 	public String assertion2(String str, String channel1, String channel2) {
 
-		String assertion2 = "";
-		assertion2 = " --- assertion 2--------------- \n " + "assert PROT_IMP_R_IO_" + str + "_"
-				+ splitChannel(channel1) + "_" + splitChannel(channel2) + ":[deadlock free [FD]] \n"
+		String assertion2 = "---- D.6: Protocols are Strong Compatible \n ";
+		assertion2 = " --- assertion 2--------------- \n "
+				+ "" + "assert PROT_IMP_R_IO_" + str + "_"
+				+ splitChannel(channel1) + "_" + splitChannel(channel2) + ":[deadlock free [FD]] "
+						+ "\n"
 				+ "assert PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_" + splitChannel(channel1)
-				+ ":[deadlock free [FD]] \n"
-
+				+ ":[deadlock free [FD]] "
+				+ "\n"
 				+ "assert PROT_IMP_R_IO_" + str + "_" + splitChannel(channel1) + "_" + splitChannel(channel2)
-				+ "[T= DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel1) + "_" + splitChannel(channel2) + "\n"
+				+ "[T= DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel1) + "_" + splitChannel(channel2) 
+				+ "\n"
 				+ "assert PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_" + splitChannel(channel1)
-				+ "[T= DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_" + splitChannel(channel1) + "\n"
+				+ "[T= DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_" + splitChannel(channel1)
+				+ "\n"
 				+ "assert PROT_IMP_R_IO_" + str + "_" + splitChannel(channel1) + "_" + splitChannel(channel2)
 				+ "\\ outputs_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel1) + "_" + splitChannel(channel2)
-				+ ":[divergence free [FD]]" + "\n" + "assert PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_"
+				+ ":[divergence free [FD]]" 
+				+ "\n"
+				+ "assert PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_"
 				+ splitChannel(channel1) + "\\ outputs_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_"
-				+ splitChannel(channel1) + ":[divergence free [FD]]\n";
+				+ splitChannel(channel1) + ":[divergence free [FD]]"
+						+ "\n";
 
 		// System.out.println(assertion2);
 
@@ -1135,15 +1268,95 @@ public class Composition {
 
 		String assertion3 = "";
 
+		// verifica se a porta tem multiplicidade
+
+		// se o string possui "STM_"
+		String[] parte_o_channel1;
+		String componentName;
+
+		// verifica de que componente e o channel
+		String[] parts = channel1.split("\\.");
+		String part_channel1 = parts[0];
+		String o_channel1;
+
+		o_channel1 = this.getComponentOwner(part_channel1);
+
+		if (o_channel1.contains("STM_")) {
+			parte_o_channel1 = o_channel1.split("STM_");
+			componentName = parte_o_channel1[1];
+		} else {
+			componentName = o_channel1;
+		}
+
+		//
+		String[] parte_o_channel2;
+		String componentName2;
+
+		// verifica de que componente e o channel
+		String[] parts2 = channel2.split("\\.");
+		String part_channel2 = parts2[0];
+		String o_channel2;
+
+		o_channel2 = this.getComponentOwner(part_channel2);
+
+		if (o_channel2.contains("STM_")) {
+			parte_o_channel2 = o_channel2.split("STM_");
+			componentName2 = parte_o_channel2[1];
+		} else {
+			componentName2 = o_channel2;
+		}
+
+		// ---------------------------
+		String[] tmpChannel1 = channel1.split("\\.");
+		Declarations declaration = Declarations.getInstance();
+		Port tmpPort = declaration.getPort(tmpChannel1[0]);
+
+		String nrDual1 = "";
+		if (tmpPort.isMulti()) {
+
+			nrDual1 = tmpChannel1[2];
+		}
+
+		String[] tmpChannel2 = channel2.split("\\.");
+		Port tmpPort2 = declaration.getPort(tmpChannel2[0]);
+
+		String nrDual2 = "";
+		if (tmpPort2.isMulti()) {
+
+			nrDual2 = tmpChannel2[2];
+		}
+
 		assertion3 = "assert DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel1) + "_" + splitChannel(channel2)
-				+ "[T= PROT_IMP_R_IO_" + str + "_" + splitChannel(channel1) + "_" + splitChannel(channel2) + "\n"
+				+ "[T= PROT_IMP_R_IO_" + str + "_" + splitChannel(channel1) + "_" + splitChannel(channel2) + "" + 
+				"\n"
 				+ "assert DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_" + splitChannel(channel1)
 				+ "[T= PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_" + splitChannel(channel1) + "\n"
 
-				+ "  assert DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel1) + "_" + splitChannel(channel2)
-				+ "[F= PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_" + splitChannel(channel1) + "\n"
-				+ "  assert DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_" + splitChannel(channel1)
-				+ "[F= PROT_IMP_R_IO_" + str + "_" + splitChannel(channel1) + "_" + splitChannel(channel2) + "\n";
+				// usar contexto
+				+ "assert DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel1) + "_" + splitChannel(channel2)
+				+ "[F= protocolo_" + componentName2 + "_" + this.splitPortFromChannel(channel2) + nrDual2 + "("
+				+ channel2 + ")" + "[" + channel2 + "<->" + channel1 + "]" + "protocolo_" + componentName + "_"
+				+ this.splitPortFromChannel(channel1) + nrDual1 + "(" + channel1 + ")" + "\n"
+
+				+ "assert DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_" + splitChannel(channel1)
+				+ "[F= protocolo_" + componentName +"_" +  this.splitPortFromChannel(channel1) + nrDual1 + "("
+				+ channel1 + ")" + "[" + channel1 + "<->" + channel2 + "]" + "protocolo_" + componentName2 + "_"
+						+ this.splitPortFromChannel(channel2) + nrDual2 + "(" + channel2 + ")" + "\n";
+
+				
+			//
+				
+			//	+ str + "_" + splitChannel(channel1) + "_" + splitChannel(channel2) + "\n";
+
+		
+		// + " assert DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel1) + "_" +
+		// splitChannel(channel2)
+		// + "[F= PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_" +
+		// splitChannel(channel1) + "\n"
+		// + " assert DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_" +
+		// splitChannel(channel1)
+		// + "[F= PROT_IMP_R_IO_" + str + "_" + splitChannel(channel1) + "_" +
+		// splitChannel(channel2) + "\n";
 
 		// System.out.println(assertion3);
 
@@ -1206,7 +1419,7 @@ public class Composition {
 				// outrasportas
 				String port_hidden = eliminaPortaAtual(ports_comp_, porta_);
 
-				portTemp = declaration.getPort(porta_);
+				portTemp = declaration.getPort(porta_, temp_);
 
 				// verifica se a porta tem guarda
 
@@ -1282,7 +1495,7 @@ public class Composition {
 						rename = rename + "<- tag_" + porta_;
 						rename = "[[" + rename + "]]";
 
-						String protocolName = "temp_protocolo_" + type.get(i).getType() + porta_ + "_" + j;
+						String protocolName = "temp_protocolo_" + type.get(i).getType() + "_" + porta_ + "_" + j;
 
 						temp_protocols = temp_protocols + "\n" + protocolName + "  = " + type.get(i).getType() + "0";
 
@@ -1323,7 +1536,8 @@ public class Composition {
 						temp_protocols = temp_protocols + rename + hide_temp;
 
 						processoWBS = processoWBS + "processoWBS_" + type.get(i).getType() + "_" + j + " = " + ""
-								+ " wbisim(" + "temp_protocolo_" + type.get(i).getType() + "_" + j + ") " + "\n";
+								+ " wbisim(" + "temp_protocolo_" + type.get(i).getType() + "_" + porta_ + "_" + j + ") "
+								+ "\n";
 
 						String WBSprotocolName = "processoWBS_" + type.get(i).getType() + "_" + j;
 
@@ -1334,8 +1548,6 @@ public class Composition {
 
 				} else {
 
-					
-
 					// RENAME
 					rename = porta_ + ".0" + aux_guard;
 					rename = rename + "<- tag_" + porta_ + aux_guard2;
@@ -1345,11 +1557,10 @@ public class Composition {
 
 					temp_protocols = temp_protocols + "\n" + protocolName + "  = " + type.get(i).getType() + "0";
 
-					if (hide.length() > 0 &&  port_hidden.length() > 0) {
+					if (hide.length() > 0 && port_hidden.length() > 0) {
 
-						hide = "\\" + "{|" + hide + ","+ port_hidden + "|} \n";
-					}
-					else if (hide.length() > 0 || port_hidden.length() > 0) {
+						hide = "\\" + "{|" + hide + "," + port_hidden + "|} \n";
+					} else if (hide.length() > 0 || port_hidden.length() > 0) {
 
 						hide = "\\" + "{|" + hide + port_hidden + "|} \n";
 					}
@@ -1379,7 +1590,7 @@ public class Composition {
 	private String eliminaPortaAtual(HashSet<String> ports_comp_, String portaAtual) {
 
 		String retorno = "";
-		
+
 		HashSet<String> clone = (HashSet<String>) ports_comp_.clone();
 
 		Object array[] = clone.toArray();
@@ -1399,29 +1610,6 @@ public class Composition {
 			}
 
 		}
-
-		// HashSet<String> modifica = ports_comp_;
-		// modifica.remove(portaAtual);
-
-		// for (Iterator<String> iterator = ports_comp_.iterator(); iterator.hasNext();)
-		// {
-		// String value = iterator.next();
-		// if (value.equals(portaAtual)) {
-		//iterator.remove();
-		// }
-		// }
-
-		// while (it_.hasNext()) {
-		// String temp = (String) it_.next();
-		// if (temp.equals(portaAtual)) {
-
-		// it_.remove();
-
-		// }
-
-		// }
-
-	
 
 		for (int k = 0; k < array2.length; k++)
 
@@ -1644,11 +1832,11 @@ public class Composition {
 
 	}
 
-	public static void main(String args[]) {
+//	public static void main(String args[]) {
 
-		Composition c = new Composition();
-		c.tagProtocol();
-	}
+	// Composition c = new Composition();
+	// c.tagProtocol();
+//	}
 
 // monta contrato
 	/**
@@ -1738,6 +1926,13 @@ public class Composition {
 
 //contrato feedback
 
+	/**
+	 * 
+	 * @param c1
+	 * @param sinc
+	 * @return
+	 */
+
 	public String contratoFeed(String c1, SetSinc sinc) {
 
 		String str_ctr = "";
@@ -1814,6 +2009,13 @@ public class Composition {
 		return str_ctr;
 	}
 
+	/**
+	 * 
+	 * @param portas
+	 * @param op
+	 * @return
+	 */
+
 	public String montaRelacao(ArrayList<String> portas, ArrayList<String> op) {
 
 		String rel = "";
@@ -1855,16 +2057,27 @@ public class Composition {
 
 ///classe processo
 
-	class Processo {
+	class ProcessoInterleave {
 
 		String name;
 		String corpo;
 		int index;
+		String component1;
+		String component2;
 
-		Processo(String name, String corpo, int index) {
+		ProcessoInterleave(String name, String corpo, int index) {
 			this.name = name;
 			this.corpo = corpo;
 			this.index = index;
+		}
+
+		ProcessoInterleave(String name, String corpo, int index, String component1, String component2) {
+			this.name = name;
+			this.corpo = corpo;
+			this.index = index;
+			this.component1 = component1;
+			this.component2 = component2;
+
 		}
 
 		String montaString() {

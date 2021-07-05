@@ -810,7 +810,7 @@ public class CompositeView {
 							
 							for (int x = 0; x < temp.getPorts().length; x++) {
 								
-								String portName = temp.getPorts()[x].getName();
+								String portName = temp.getPorts()[x].getName() + ".0";
 								portas.add(portName);
 								
 							}

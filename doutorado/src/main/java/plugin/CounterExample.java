@@ -32,6 +32,7 @@ import com.change_vision.jude.api.inf.project.ProjectAccessor;
 
 
 public class CounterExample {
+	
 
 	private ProjectAccessor projectAccessor;
 	FdrWrapper wrapper;
@@ -721,6 +722,7 @@ public class CounterExample {
 	}
 
 	private void buildCounterExample(Object counterExample, FdrWrapper wrapper) {
+		
 		List<no> path = new ArrayList<no>();
 		try {
 			wrapper.getDivergence(counterExample);

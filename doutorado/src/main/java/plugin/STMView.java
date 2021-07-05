@@ -342,7 +342,7 @@ public class STMView {
 
 								Port tempPort = new Port((String) part_action_temp[0], nome);
 								tempPort.setMulti(multi);
-								tempPort.setGuard(haGuarda);
+//								tempPort.setGuard(haGuarda);
 
 								declaration.addPort(tempPort);
 							}
@@ -577,8 +577,11 @@ public class STMView {
 									// settemp
 									// + temp1 + part_action2[0] + "_O";
 
-									temp1 = getemp + temp1 + part_action2[0] + "_I" + "" + "->" + settemp + temp1
-											+ part_action2[0] + "_O" + "?" + temp3;
+								//	temp1 = getemp + temp1 + part_action2[0] + "_I" + "" + "->" + settemp + temp1
+									//		+ part_action2[0] + "_O" + "?" + temp3;
+									
+									temp1 = getemp + temp1 + part_action2[0] + "_I" + "?" + temp3 + "->" + settemp + temp1
+											+ part_action2[0] + "_O";// + "?" + temp3;
 
 								}
 							}
@@ -1579,7 +1582,16 @@ public class STMView {
 		return retorno;
 
 	}
+	
+	
 
+	/**
+	 * 
+	 * @param str
+	 * @param cmpt
+	 * @return
+	 */
+	
 	public String getcontainVar(String str, String cmpt) {
 		String retorno = "";
 		Declarations declaration = Declarations.getInstance();
@@ -1591,7 +1603,7 @@ public class STMView {
 
 				retorno = retorno + atributos.get(i).getName();
 
-				retorno = retorno + ".";
+				retorno = retorno + "";
 				// break;
 			}
 		}

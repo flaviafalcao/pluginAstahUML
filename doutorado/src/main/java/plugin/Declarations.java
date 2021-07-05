@@ -298,7 +298,7 @@ public class Declarations {
 	}
 
 	/**
-	 * Retorna o Objeto conforme seu nome
+	 * Retorna o Objeto Porta conforme  nome
 	 * 
 	 * @param name
 	 * @return
@@ -311,6 +311,37 @@ public class Declarations {
 		for (int i = 0; i < this.portas.size(); i++) {
 
 			if (this.portas.get(i).getName().equalsIgnoreCase(name)) {
+
+				retorno = portas.get(i);
+				
+				if(retorno.isGuard()) {
+					
+					break;
+				}
+				
+			}
+		}
+
+		return retorno;
+
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param name
+	 * @param owner
+	 * @return
+	 */
+	
+	public Port getPort(String name, String owner) {
+
+		Port retorno = null;
+
+		for (int i = 0; i < this.portas.size(); i++) {
+
+			if (this.portas.get(i).getName().equalsIgnoreCase(name) &&
+					this.portas.get(i).getOwner().equalsIgnoreCase(owner)) {
 
 				retorno = portas.get(i);
 				
