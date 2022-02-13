@@ -1,2 +1,2 @@
-# pluginAstahUML
+# pluginAstahUMLBRIC
 Plugin Astah
