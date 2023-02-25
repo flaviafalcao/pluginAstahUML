@@ -44,6 +44,8 @@ public class Composition {
 
 		String[] label;
 		String[] label1;
+		
+		
 
 		if (connector.getName().contains("<->")) {
 
@@ -88,10 +90,13 @@ public class Composition {
 					+ declaration.getId(connector.getPartsWithPort()[0].getName()) + aux2;
 
 		}
+		
+		if ( connectorStr1.length() >0 && connectorStr2.length()>0 ) {
 
 		SetSinc set_sinc = new SetSinc(connector, connectorStr1, connectorStr2);
 
 		setsinc.add(set_sinc);
+		}
 
 	}
 
@@ -282,7 +287,7 @@ public class Composition {
 	}
 
 	/**********************************************/
-//rotina que informa de qual componente  a porta
+//rotina que informa de qual componente eh  a porta
 
 	/**
 	 * 
@@ -471,7 +476,7 @@ public class Composition {
 			write = write + assertion_interleave;
 
 			arquivo = new FileWriter(
-					new File("C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + filename));
+					new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + filename));
 			arquivo.write(write);
 			arquivo.flush();
 			arquivo.close();
@@ -542,9 +547,9 @@ public class Composition {
 					assertion3 = assertion3 + assertion3(processoanteriorname, setsinc.get(0).getChannel1(),
 							setsinc.get(0).getChannel2());
 					
-					assertion4 = "\n ";
-					// +
-					// "assert " + processoanteriorname + ":[deadlock free [FD]] \n";
+					assertion4 = "\n "
+					 +
+					 "assert " + processoanteriorname + ":[deadlock free [FD]] \n";
 
 					String filename = "assertion" + declaration.getNum() + "" + i + ".csp";
 					assertionsModel.add(filename);
@@ -560,7 +565,7 @@ public class Composition {
 									+ assertion3 + assertion4;
 
 					arquivo = new FileWriter(
-							new File("C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + filename));
+							new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + filename));
 					arquivo.write(write);
 					arquivo.flush();
 					arquivo.close();
@@ -593,6 +598,11 @@ public class Composition {
 						aux2 = ".0";
 					}
 
+					// inserir assertion
+					
+					//composition = composition + "\n" + "assert "  + processcomp  + ":[deadlock free[FD]]"
+					//		+ "\n";
+					
 					composition = composition + processcomp + " = " + processoanteriorname + "\n" + "[|{|"
 							+ setsinc.get(i).getChannel1() + aux1 + "," + setsinc.get(i).getChannel2() + aux2 + "|}|]"
 							+ "\n" + "BFIO_INIT(" + setsinc.get(i).getChannel1() + aux1 + ","
@@ -625,7 +635,7 @@ public class Composition {
 					assertConn.add(ac);
 
 					arquivo = new FileWriter(
-							new File("C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + filename));
+							new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + filename));
 					arquivo.write(write);
 					arquivo.flush();
 					arquivo.close();
@@ -1332,16 +1342,19 @@ public class Composition {
 				+ "assert DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_" + splitChannel(channel1)
 				+ "[T= PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_" + splitChannel(channel1) + "\n"
 
-				// usar contexto
-				+ "assert DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel1) + "_" + splitChannel(channel2)
-				+ "[F= protocolo_" + componentName2 + "_" + this.splitPortFromChannel(channel2) + nrDual2 + "("
-				+ channel2 + ")" + "[" + channel2 + "<->" + channel1 + "]" + "protocolo_" + componentName + "_"
-				+ this.splitPortFromChannel(channel1) + nrDual1 + "(" + channel1 + ")" + "\n"
+				// usar contexto 
+				// retirado para teste v2 artigo
+				// incluir depois
+				//+ "assert DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel1) + "_" + splitChannel(channel2)
+				//+ "[F= protocolo_" + componentName2 + "_" + this.splitPortFromChannel(channel2) + nrDual2 + "("
+				//+ channel2 + ")" + "[" + channel2 + "<->" + channel1 + "]" + "protocolo_" + componentName + "_"
+				//+ this.splitPortFromChannel(channel1) + nrDual1 + "(" + channel1 + ")" + "\n"
 
-				+ "assert DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_" + splitChannel(channel1)
-				+ "[F= protocolo_" + componentName +"_" +  this.splitPortFromChannel(channel1) + nrDual1 + "("
-				+ channel1 + ")" + "[" + channel1 + "<->" + channel2 + "]" + "protocolo_" + componentName2 + "_"
-						+ this.splitPortFromChannel(channel2) + nrDual2 + "(" + channel2 + ")" + "\n";
+				//+ "assert DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_" + splitChannel(channel1)
+				//+ "[F= protocolo_" + componentName +"_" +  this.splitPortFromChannel(channel1) + nrDual1 + "("
+				//+ channel1 + ")" + "[" + channel1 + "<->" + channel2 + "]" + "protocolo_" + componentName2 + "_"
+					//	+ this.splitPortFromChannel(channel2) + nrDual2 + "(" + channel2 + ")" 
+				+ "\n";
 
 				
 			//
@@ -1467,7 +1480,7 @@ public class Composition {
 
 				ArrayList<Attribute> tempVar = tempBasic.getVar();
 
-				if (tempVar.size() > 0) {
+				if (tempVar.size() > 0 & hide.length()>0 ) {
 					hide = hide + ",";
 
 				}
@@ -1665,6 +1678,7 @@ public class Composition {
 
 	public String printBasicComponent() {
 
+		
 		String print = "";
 		ArrayList<Attribute> temp_var;
 		String set_sinc = "";
@@ -1673,7 +1687,10 @@ public class Composition {
 		// verificar se ha memoria
 		ArrayList<Memory> memories = declaration.getMemories();
 
-		for (BasicComponent temp : basicComponent) {
+		for (BasicComponent temp : basicComponent) { // inicio for
+			
+			if(!temp.getStm().isEmpty()) {
+			
 			print = print + temp.getName() + "(id) =" + temp.getStm();
 
 			// conjunto sincronizacao : gets e sets + internal + memory trigger
@@ -1781,8 +1798,10 @@ public class Composition {
 
 			// processo getset
 			set_sinc = "";
+			
+		}// fim iF
 
-		}
+		} // fim for 
 		return print;
 	}
 

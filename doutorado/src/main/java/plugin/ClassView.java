@@ -866,6 +866,7 @@ public class ClassView { // {
 		int retorno = -1;
 		if (port.getRequiredInterfaces().length > 0) {
 			retorno = 1;
+			return retorno;
 		} else if (port.getProvidedInterfaces().length > 0) {
 			retorno = 0;
 		}

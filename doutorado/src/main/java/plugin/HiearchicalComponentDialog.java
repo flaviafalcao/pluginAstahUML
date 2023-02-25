@@ -51,7 +51,7 @@ public class HiearchicalComponentDialog extends JDialog{
 	private JTextField tf;
 	ProjectAccessor projectAccessor;
 	private boolean DEBUG = false;
-
+	INamedElement[] foundElements;
 	
 	public HiearchicalComponentDialog (JFrame frame, boolean modal) throws FileNotFoundException, IOException, 
 	ClassNotFoundException {
@@ -117,7 +117,7 @@ public class HiearchicalComponentDialog extends JDialog{
 		Declarations declaration = Declarations.getInstance();
 		
 		IClass pkg_comp;
-		INamedElement[] foundElements;
+		
 		try {
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();			
 			foundElements = findComponents();
@@ -211,7 +211,7 @@ public class HiearchicalComponentDialog extends JDialog{
 		    		Declarations declaration = Declarations.getInstance();
 		    		declaration.getNameComponents().add(name);
 		    		
-		    		
+		    		//// criar diagramas
 		    		
 		    		IModel project = projectAccessor.getProject();
 		        	
@@ -245,12 +245,12 @@ public class HiearchicalComponentDialog extends JDialog{
 		        	INodePresentation iNNote1  = dec.createNote("STR_"+ name, new Point2D.Double(260, 280));
 		    	 	dec.createNoteAnchor(iNClass, iNNote1);
 		    	 	
-		    	
+		    	 	IClass basic_temp  = null;
 		    	 	// criar classes que representam os componentes selecionados 
-		    	 	for (int k = 0; k < str_comp.size();k++) {
+		    	 	/*for (int k = 0; k < str_comp.size();k++) {
 		    	 		
 		    	 		//classe
-			    		IClass basic_temp = editorBasico.createClass(pkg, str_comp.get(k).name);
+			    		 basic_temp = editorBasico.createClass(pkg, str_comp.get(k).name);
 			    		basic_temp.addStereotype("BasicComponent");
 			    		
 			    		INodePresentation iNClassTemp =dec.createNodePresentation(basic_temp, new Point2D.Double(40, 150 + 80*(k+1)));
@@ -279,7 +279,7 @@ public class HiearchicalComponentDialog extends JDialog{
 			    			System.out.println("type " +testeat[m].getType());
 			    			System.out.println("assoc " +testeat[m].getAssociation());
 					    	
-			    		}*/
+			    		}
 			    		
 			    		
 			    	   
@@ -288,11 +288,11 @@ public class HiearchicalComponentDialog extends JDialog{
 			    		
 			    		
 			    		 
-			    		// dec.createAssociationClassPresentation((IAssociationClass)iAs, iNClass, iNClassTemp);
+			    	
 			    		
 			    		
 				    	
-		    	 	}
+		    	 	}*/
 		    	 	
 		    	 	
 		    	 	
@@ -301,17 +301,68 @@ public class HiearchicalComponentDialog extends JDialog{
 		            ICompositeStructureDiagram newCS = decom.createCompositeStructureDiagram(project, "STR_" + name);
 		            decom.setDiagram(newCS);
 		            
-		           INodePresentation iNP_str = decom.createStructuredClassPresentation(basic, new Point2D.Double(10, 10));
-		           
-		          System.out.println( "nr filhos" + iNP_str.getChildren().length);
-		          //  IAttribute attribute= editorBasico.createAttribute(basic, "aaa", "Part");
+		            INodePresentation iNP_str = decom.createStructuredClassPresentation(basic, new Point2D.Double(10, 10));
+		            
+		            // IClass partBaseClass 
+		            
+		            IClass  temp = null; 
+		            
+		            for (int k = 0; k < str_comp.size();k++) {  // componentes selecionados 
+		            
+		            // str_comp.get(k).name
+		              String component =  str_comp.get(k).name;
+		              
+		              int nr = str_comp.get(k).qtd.intValue();
+		            	
+		            	for (INamedElement element : foundElements) {		    			
+			    			
+			            	temp = castIPackage(element);
+			    			if (temp.getName().equalsIgnoreCase(component)) {
+			    				basic_temp = temp;
+			    				
+			    			}			    			
+			    		}
+		            
+		            	
+		            	for ( int j = 0; j<nr ;j++) {
+		            	
+		            	 IAssociation asso = editorBasico.createAssociation(basic, basic_temp, "", "", component + j );
+		            	 IAttribute[] memberEnds = asso.getMemberEnds();
+			             memberEnds[0].setComposite();
+			             
+ 			            decom.setDiagram(newCS);
+			             //create presentation
+			             INodePresentation ps = null;
+			             ps = decom.createNodePresentation(memberEnds[1], iNP_str, new Point2D.Double(15*k+j+20,15*k+j+30));
+			        
+		            	}     
+		            
+		            }
 		            
 		            
-		           
-		           
-		           
-		           
+		            
 		         
+		            
+		            
+		            
+		            
+		           // IAssociation asso = editorBasico.createAssociation(basic, basic_temp, "", "", "teste01");
+		           // IAttribute[] memberEnds = asso.getMemberEnds();
+		          //   memberEnds[0].setComposite();
+		             
+		             //set diagram
+		        
+		         //    decom.setDiagram(newCS);
+		             //create presentation
+		         //    INodePresentation ps = null;
+		        //     ps = decom.createNodePresentation(memberEnds[1], iNP_str, new Point2D.Double(15,15));
+		             
+		           
+		            System.out.println( "nr filhos" + iNP_str.getChildren().length);
+		            
+		         
+		            
+		            
 		           declaration.setNameComponents(new ArrayList<String>());
 		            
 		            TransactionManager.endTransaction();

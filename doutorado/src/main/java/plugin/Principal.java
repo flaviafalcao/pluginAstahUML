@@ -41,6 +41,13 @@ public class Principal {
 		boolean check = true;
 		boolean checkCTR = true;
 		String path = "";
+		
+		
+		declaration.setBasicComponent(new ArrayList<BasicComponent>());
+		declaration.setOperations(new ArrayList<Operation>());
+		declaration.setInstances(new HashSet<Instance>());
+		declaration.setContratos( new ArrayList<Contrato>());
+		
 
 		try {
 
@@ -70,7 +77,8 @@ public class Principal {
 			nomeModelo = filemodelo;
 
 			arquivo = new FileWriter(
-					new File("C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + filemodelo));
+					//Doutorado_2022/PLUGIN/CSP/
+					new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + filemodelo));
 
 			ModeloAssertion modelocsp = new ModeloAssertion();
 
@@ -207,8 +215,7 @@ public class Principal {
 					+ "\n" + "-- funcDefault \n"
 					// + funcDefaut +"\n"
 					+ tagProtocol + "" + "\n";
-			// dual + "\n";
-
+		
 			InputTypeDeclaration input = new InputTypeDeclaration();
 
 			String inputType = input.inputType();
@@ -326,7 +333,7 @@ public class Principal {
 				// ----------------------------------------------------------------------------------------------------//
 				String verificaCTR = "verificaCTR" + declaration.getNum() + ".csp";
 				FileWriter arquivoCTR = new FileWriter(
-						new File("C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + verificaCTR));
+						new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + verificaCTR));
 
 				VerificationContract contrato = new VerificationContract();
 				assertivaCtr = contrato.ContractCSP();
@@ -341,9 +348,9 @@ public class Principal {
 				// -------------------------------------------------------------
 				// -- checa se eh um IO Process ----------------------------------
 				// --------------------------------------------------------------
-
+                   //comentado p testes 
 				checkCTR = checkRefinementIO(
-						"C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + verificaCTR);
+						"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + verificaCTR);
 				        
 
 				wrapper = FdrWrapper.getInstance();
@@ -394,7 +401,7 @@ public class Principal {
 							porta = protocolNames.get(l).getPortName();
 
 							trace_lts = lts.protocolo(
-									"C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + filemodelo,
+									"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + filemodelo,
 									protocolName, porta);
 
 							String protocolId = "";
@@ -422,7 +429,7 @@ public class Principal {
 					String fileName = "arquivo_protocolo" + declaration.getNum();
 
 					arquivo2 = new FileWriter(new File(
-							"C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + fileName + ".csp"));
+							"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + fileName + ".csp"));
 					// "C:/Users/flavi/git/pluginAstahUML/doutorado/src/main/resources/" + fileName
 					// + ".csp"));
 					write2 = write2 + map;
@@ -446,7 +453,7 @@ public class Principal {
 					for (String assertion : assertions) {
 
 						check = checkRefinement(
-								"C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + assertion);
+								"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + assertion);
 
 
 											
@@ -516,7 +523,7 @@ public class Principal {
 
 			retorno = wrapper.executeAssertionsIO(assertions);
 			System.out.println(" numero de contra exemplos" + wrapper.getCounterExamples().size());
-			System.out.println("retorno" + retorno);
+			System.out.println("retorno checkRefinementIO" + retorno);
 
 		}
 		return retorno;
@@ -542,4 +549,48 @@ public class Principal {
 		return retorno;
 	}
 
+	 /// verifica padrao
+	
+	public boolean checkRefinementPadroes(String filename) {
+		boolean retorno = true;
+		wrapper = FdrWrapper.getInstance();
+		wrapper.loadFile(filename);
+
+		List<Object> assertions = FdrWrapper.getInstance().getAssertions();
+		if (assertions.size() > 0) {
+			System.out.println("Numero de assertions : " + assertions.size());
+
+			retorno = wrapper.executeAssertionsSemContraExemplo(assertions);
+			//System.out.println(" numero de contra exemplos" + wrapper.getCounterExamples().size());
+			System.out.println("retorno" + retorno);
+//
+		}
+		return retorno;
+	}
+
+	
+
+	public boolean validaPadroes() {
+		
+		boolean check = false;
+		
+		long tempoInicial = System.currentTimeMillis();
+		
+		check = checkRefinementIO(
+				"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "BehaviourRestrictionVerification.csp");
+		
+		long tempofinal = System.currentTimeMillis() - tempoInicial;
+		
+		
+		System.out.printf("check -->>>>" + check );
+	    
+		
+		System.out.printf("%.3f ms%n",  tempofinal/ 1000d);
+    
+		
+		return check;
+		
+		
+	}
+	
 }

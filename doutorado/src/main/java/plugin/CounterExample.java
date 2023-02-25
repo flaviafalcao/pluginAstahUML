@@ -39,7 +39,6 @@ public class CounterExample {
 	List<dePara> deParalist = new ArrayList<dePara>();
 	int stateid = 0;
 	private static ArrayList<ExtendTransition> marcadas = new ArrayList<ExtendTransition>();
-
 	private static ArrayList<ILinkPresentation> array_transitions = new ArrayList<ILinkPresentation>();
 
 	public CounterExample() {
@@ -246,7 +245,6 @@ public class CounterExample {
 
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			String name = Principal.nomeModelo;
-			// create sequence diagram
 			IModel project = projectAccessor.getProject();
 
 			//
@@ -254,9 +252,7 @@ public class CounterExample {
 			ArrayList<MachineClone> clones = declaration.getMachineclones();
 
 			MachineClone clone = clones.get(0);
-
 			IStateMachine machine = clone.machine;
-
 			String manchineName = machine.getName().trim().split("STM_")[1];
 			
 			
@@ -274,7 +270,6 @@ public class CounterExample {
 			// metodo para formatar
 
 			IState[] states = machine.getStates();
-			
 			
 	
 					
@@ -375,12 +370,7 @@ public class CounterExample {
 
 		for (int i = 0; i < array_transitions.size(); i++) {
 
-		//	System.out.println("---->>" + array_transitions.get(i).getSource().toString());
-		//	if (array_transitions.get(i).getSource().toString().startsWith("Initial")) {
-		//		array.add(array_transitions.get(i));
-
-		//	}
-
+	
 			for (int k = 0; k < marcadas.size(); k++) {
 
 				if ((marcadas.get(k).getSource()).toString()
@@ -389,9 +379,7 @@ public class CounterExample {
 								.equalsIgnoreCase(array_transitions.get(i).getTarget().toString())) {
 
 					array.add(array_transitions.get(i));
-					// array_transitions.get(i).setProperty(PresentationPropertyConstants.Key.LINE_COLOR,
-					// "#FF0000");
-				}
+							}
 
 			}
 		}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<properties>
 		<bundle.symbolicName>doutorado.doutorado</bundle.symbolicName>
 		<bundle.namespace>plugin</bundle.namespace>
@@ -33,7 +33,7 @@
 		<repository>
 			<id>java.net</id>
 			<name>java.net Maven Repository</name>
-			<url>http://download.java.net/maven/2</url>
+			<url>https://download.java.net/maven/2</url>
 			<releases>
 			</releases>
 			<snapshots>
@@ -42,7 +42,7 @@
 		</repository>
 		<repository>
 			<id>uk-central</id>
-			<url>http://uk.maven.org/maven2/</url>
+			<url>https://uk.maven.org/maven2/</url>
 		</repository>
 	</repositories>
 	<reporting>
@@ -258,7 +258,7 @@
 			<artifactId>astah-api</artifactId>
 			<version>${astah.version}</version>
 			<scope>system</scope>
-			<systemPath>${astahPath}/astah-api.jar</systemPath>
+			<systemPath>C:/Program Files/astah-UML/astah-api.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>

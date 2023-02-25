@@ -702,7 +702,7 @@ public class CompositeView {
 	public static void main(String[] args) {
 		try {
 			CompositeView c = new CompositeView(
-					"C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/modelo.asta");
+					"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/modelo.asta");
 
 			INamedElement[] foundElements = c.findComposite();
 			ICompositeStructureDiagram compositeStructureDiagram;

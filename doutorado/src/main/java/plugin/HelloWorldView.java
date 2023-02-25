@@ -34,6 +34,7 @@ import com.change_vision.jude.api.inf.ui.ISelectionListener;
 
 public class HelloWorldView extends JPanel implements IPluginExtraTabView, ProjectEventListener {
 
+	
 	ProjectAccessor projectAccessor;
 	private int index = 0;
 

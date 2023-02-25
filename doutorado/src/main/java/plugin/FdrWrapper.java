@@ -240,7 +240,6 @@ public class FdrWrapper {
 		try {
 			for (Object assertion : assertions) {
 				isRefinement = true;
-			//	System.out.print(assertion);
 				invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
 				for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
 						"counterexamples", null, null)) {
@@ -281,7 +280,6 @@ public class FdrWrapper {
 			for (Object assertion : assertions) {
 				isRefinement = true;
 				Object counter = null;
-				System.out.print(assertion);
 				invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
 				for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
 						"counterexamples", null, null)) {
@@ -311,6 +309,46 @@ public class FdrWrapper {
 
 		return result;
 	}
+	
+	
+	public boolean executeAssertionsSemContraExemplo(List<Object> assertions) {
+		boolean isRefinement = true;
+		boolean passed = true;
+		boolean result = true;
+		try {
+			for (Object assertion : assertions) {
+				isRefinement = true;
+			//	Object counter = null;
+				invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
+				for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
+						"counterexamples", null, null)) {
+			//		counter = counterExample;
+			//		System.out.println("tem contra exemplo " + this.counterExamples.size());
+					isRefinement = false; // ha contraexemplo
+				}
+
+				passed = (boolean) invokeProperty(assertion.getClass(), assertion, "passed", null, null);
+
+//				if (!passed) {
+//					this.counterExamples.add(counter);
+//				}
+
+				result = passed;
+
+				System.out.print(" passed ->> " + passed);
+				System.out.println(" is refinement " + isRefinement);
+			}
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+		
+		
+	}
+	
 
 	/**
 	 * 

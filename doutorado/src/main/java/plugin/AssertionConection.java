@@ -2,6 +2,7 @@ package plugin;
 
 import com.change_vision.jude.api.inf.model.IConnector;
 
+
 public class AssertionConection {
 	
 	private String file;

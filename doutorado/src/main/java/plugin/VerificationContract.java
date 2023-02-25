@@ -52,12 +52,12 @@ public class VerificationContract {
 					+ "\nassert LHS_OutputDec_A_" + instance_temp.getName() + " [F= RHS_OutputDec_A_"
 					+ instance_temp.getName() + "";
 
-			for (String portName : instance_temp.getPortas()) {
+			//for (String portName : instance_temp.getPortas()) {
 
-				cspFDR = cspFDR + "\n" + "assert LHS_OutputDec_B_" + instance_temp.getName() + "(" + portName
-						+ ") [F= RHS_OutputDec_B_" + instance_temp.getName() + "(" + "" + portName + ")";
+			//	cspFDR = cspFDR + "\n" + "assert LHS_OutputDec_B_" + instance_temp.getName() + "(" + portName
+				//		+ ") [F= RHS_OutputDec_B_" + instance_temp.getName() + "(" + "" + portName + ")";
 
-			}
+			//}
 
 			HashSet<String> ports_comp;
 			Iterator<String> it_str;
@@ -81,7 +81,7 @@ public class VerificationContract {
 		String str = "";
 		try {
 			arquivo = new FileWriter(new File(
-					"C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + "auxiliar_" + name + ".csp"));
+					"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "auxiliar_" + name + ".csp"));
 
 			String chan = chan(name);
 			str = "---------------------------------------------------------\n" + "-- Side Condition FUNCTIONS --\n"
@@ -179,14 +179,14 @@ public class VerificationContract {
 		try {
 
 			boolean exists = (new File(
-					"C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + "function_aux.csp")).exists();
+					"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "function_aux.csp")).exists();
 			if (exists) {
 
 				System.out.println("existe");
 			}
 			{
 				arquivo = new FileWriter(
-						new File("C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/" + "function_aux.csp"));
+						new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "function_aux.csp"));
 
 				str = "--------------------------------------------------------------------\n"
 						+ "--------------------------------------------------------------------\n"

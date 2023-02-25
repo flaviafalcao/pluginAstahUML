@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Astah-Edition: all
 Astah-Version: 6.7
-Bnd-LastModified: 1619299095155
-Build-Jdk: 1.8.0_191
+Bnd-LastModified: 1671594008192
+Build-Jdk: 1.8.0_331
 Built-By: flavi
 Bundle-Activator: plugin.Activator
 Bundle-Description: %bundle.description
@@ -17,14 +17,17 @@ Export-Package: plugin;version="1.0.0.doutorado";uses:="com.change_visio
  n.jude.api.inf.editor,com.change_vision.jude.api.inf.exception,com.chan
  ge_vision.jude.api.inf.model,com.change_vision.jude.api.inf.presentatio
  n,com.change_vision.jude.api.inf.project,com.change_vision.jude.api.inf
- .ui,javax.swing,org.osgi.framework"
+ .ui,javax.swing,org.osgi.framework",plugin.bahaviour;version="1.0.0.dou
+ torado";uses:=plugin
 Import-Package: com.change_vision.jude.api.inf;resolution:=optional,com.
  change_vision.jude.api.inf.editor;resolution:=optional,com.change_visio
  n.jude.api.inf.exception;resolution:=optional,com.change_vision.jude.ap
  i.inf.model;resolution:=optional,com.change_vision.jude.api.inf.present
  ation;resolution:=optional,com.change_vision.jude.api.inf.project;resol
  ution:=optional,com.change_vision.jude.api.inf.ui;resolution:=optional,
- javax.swing;resolution:=optional,javax.swing.table;resolution:=optional
- ,org.osgi.framework;resolution:=optional;version="[1.5,2)"
+ javax.swing;resolution:=optional,javax.swing.border;resolution:=optiona
+ l,javax.swing.table;resolution:=optional,org.osgi.framework;resolution:
+ =optional;version="[1.5,2)",plugin;resolution:=optional;version="[1.0,2
+ )",plugin.bahaviour;resolution:=optional;version="[1.0,2)"
 Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.8))"
 Tool: Bnd-3.3.0.201609221906

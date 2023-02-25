@@ -206,7 +206,9 @@ public class Declarations {
 		}
 		return retorno;
 	}
-
+	
+	
+    // retorna o ID de uma instancia 
 	public int getId(String name) {
 		Iterator i = this.instances.iterator();
 		Instance temp;
@@ -639,7 +641,7 @@ public class Declarations {
 		return stm;
 	}
 
-	// retorno a IConnection do aquivo passado como parametro
+	// retorno a IConnection do arquivo passado como parametro
 
 	public IConnector getIConnector(String file) {
 
