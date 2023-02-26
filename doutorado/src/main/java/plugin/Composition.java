@@ -1345,15 +1345,15 @@ public class Composition {
 				// usar contexto 
 				// retirado para teste v2 artigo
 				// incluir depois
-				//+ "assert DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel1) + "_" + splitChannel(channel2)
-				//+ "[F= protocolo_" + componentName2 + "_" + this.splitPortFromChannel(channel2) + nrDual2 + "("
-				//+ channel2 + ")" + "[" + channel2 + "<->" + channel1 + "]" + "protocolo_" + componentName + "_"
-				//+ this.splitPortFromChannel(channel1) + nrDual1 + "(" + channel1 + ")" + "\n"
+				+ "assert DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel1) + "_" + splitChannel(channel2)
+				+ "[F= protocolo_" + componentName2 + "_" + this.splitPortFromChannel(channel2) + nrDual2 + "("
+				+ channel2 + ")" + "[" + channel2 + "<->" + channel1 + "]" + "protocolo_" + componentName + "_"
+				+ this.splitPortFromChannel(channel1) + nrDual1 + "(" + channel1 + ")" + "\n"
 
-				//+ "assert DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_" + splitChannel(channel1)
-				//+ "[F= protocolo_" + componentName +"_" +  this.splitPortFromChannel(channel1) + nrDual1 + "("
-				//+ channel1 + ")" + "[" + channel1 + "<->" + channel2 + "]" + "protocolo_" + componentName2 + "_"
-					//	+ this.splitPortFromChannel(channel2) + nrDual2 + "(" + channel2 + ")" 
+				+ "assert DUAL_PROT_IMP_R_IO_" + str + "_" + splitChannel(channel2) + "_" + splitChannel(channel1)
+				+ "[F= protocolo_" + componentName +"_" +  this.splitPortFromChannel(channel1) + nrDual1 + "("
+				+ channel1 + ")" + "[" + channel1 + "<->" + channel2 + "]" + "protocolo_" + componentName2 + "_"
+				+ this.splitPortFromChannel(channel2) + nrDual2 + "(" + channel2 + ")" 
 				+ "\n";
 
 				
