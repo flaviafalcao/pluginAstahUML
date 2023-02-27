@@ -574,7 +574,7 @@ public class Composition {
 
 				} else {
 
-					// criar contrado
+					// criar contrato
 					contrato = this.contratoFeed(processoanteriorname, setsinc.get(i));
 
 					// verificar se a porta tem um id de guarda com triguer
@@ -598,12 +598,7 @@ public class Composition {
 						aux2 = ".0";
 					}
 
-					// inserir assertion
-					
-					//composition = composition + "\n" + "assert "  + processcomp  + ":[deadlock free[FD]]"
-					//		+ "\n";
-					
-					composition = composition + processcomp + " = " + processoanteriorname + "\n" + "[|{|"
+						composition = composition + processcomp + " = " + processoanteriorname + "\n" + "[|{|"
 							+ setsinc.get(i).getChannel1() + aux1 + "," + setsinc.get(i).getChannel2() + aux2 + "|}|]"
 							+ "\n" + "BFIO_INIT(" + setsinc.get(i).getChannel1() + aux1 + ","
 							+ setsinc.get(i).getChannel2() + aux2 + ")" + "\n \n";
@@ -619,7 +614,12 @@ public class Composition {
 							setsinc.get(i).getChannel2());
 					assertion3 = assertion3(processoanteriorname, setsinc.get(i).getChannel1(),
 							setsinc.get(i).getChannel2());
-					assertion4 = "\n";
+					//assertion4 = "\n";
+					
+					assertion4 = "\n "
+							 +
+							 "assert " + processoanteriorname + ":[deadlock free [FD]] \n";
+
 
 					// a cada conection colocar num novo arquivo
 					FileWriter arquivo;
