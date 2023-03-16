@@ -5,6 +5,9 @@ import java.io.FileWriter;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,6 +32,15 @@ public class Principal {
 	boolean allconditions;
 
 	VerifyWellFormednessConditions conditions = new VerifyWellFormednessConditions();
+	
+	
+	
+	// CRIAR ARQUIVO
+	//acesso pasta local do seu projeto
+	public static final String USER_DIR = System.getProperty("user.home");
+	//separador de arquivos '\' ou '/' dependendo do Sistema Operacional
+	public static final String SEPARATOR = System.getProperty("file.separator");
+		
 
 //-----------------------------------------------------------------------
 //-----------------------------------------------------------------------
@@ -76,9 +88,28 @@ public class Principal {
 
 			nomeModelo = filemodelo;
 
+		  File dir = new File(USER_DIR + SEPARATOR + "CSP");
+		 //	
+		 //  Files.createDirectory(dir.toPath());
+		   
+		  if (!dir.exists()) {
+				//boolean d = dir.mkdir();
+			  Files.createDirectory(dir.toPath());
+			   	
+				//System.out.println("NOVO DIR" + d);
+		 }
+			
+			//System.out.println("NOVO DIR" + USER_DIR);
+			
+			//Path currentRelativePath = Paths.get("");
+			//String s = currentRelativePath.toAbsolutePath().toString();
+			//System.out.println("Current absolute path is: " + s);
+			
 			arquivo = new FileWriter(
 					//Doutorado_2022/PLUGIN/CSP/
-					new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + filemodelo));
+				// 	 new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + filemodelo));
+			         new File( dir, filemodelo));
+
 
 			ModeloAssertion modelocsp = new ModeloAssertion();
 
@@ -331,9 +362,15 @@ public class Principal {
 				// criar um arquivo para verificacao se contrato valido
 				// ---------------------------------------------//
 				// ----------------------------------------------------------------------------------------------------//
+				
+				
+					
+				
+				
 				String verificaCTR = "verificaCTR" + declaration.getNum() + ".csp";
 				FileWriter arquivoCTR = new FileWriter(
-						new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + verificaCTR));
+					//	new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + verificaCTR));
+						new File( dir, verificaCTR));
 
 				VerificationContract contrato = new VerificationContract();
 				assertivaCtr = contrato.ContractCSP();
@@ -350,7 +387,9 @@ public class Principal {
 				// --------------------------------------------------------------
                    //comentado p testes 
 				checkCTR = checkRefinementIO(
-						"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + verificaCTR);
+						//"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + verificaCTR);
+				          dir + SEPARATOR +  verificaCTR);
+				       
 				        
 
 				wrapper = FdrWrapper.getInstance();
@@ -576,8 +615,23 @@ public class Principal {
 		
 		long tempoInicial = System.currentTimeMillis();
 		
+		
+		// CRIAR ARQUIVO
+		//acesso pasta local do seu projeto
+	//	public static final String USER_DIR = System.getProperty("user.home");
+		//separador de arquivos '\' ou '/' dependendo do Sistema Operacional
+	//	public static final String SEPARATOR = System.getProperty("file.separator");
+		
+			
+		String dir = USER_DIR + SEPARATOR + "CSP";
+		
+		
+		
 		check = checkRefinementIO(
-				"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "BehaviourRestrictionVerification.csp");
+			//	"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "BehaviourRestrictionVerification.csp");
+		 dir + SEPARATOR+ "BehaviourRestrictionVerification.csp");
+		
+				
 		
 		long tempofinal = System.currentTimeMillis() - tempoInicial;
 		

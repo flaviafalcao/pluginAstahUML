@@ -52,6 +52,9 @@ public class FDR3LocationDialog extends JDialog {
 		if (!propertyFile.exists()) {
 			System.out.println(FDR3_PROPERTY_FILE);
 			// propertyFile.mkdirs();
+			
+			propertyFile.setWritable(true);
+			
 			System.out.println(propertyFile.getAbsolutePath());
 			propertyFile.createNewFile();
 			prop = new Properties();

@@ -28,6 +28,26 @@
 				<updatePolicy>never</updatePolicy>
 			</releases>
 		</pluginRepository>
+		
+	
+	
+	<pluginRepository>
+  <id>central</id>
+  <name>Central Repository</name>
+  <url>https://repo.maven.apache.org/maven2</url>
+  <layout>default</layout>
+  <snapshots>
+    <enabled>false</enabled>
+  </snapshots>
+  <releases>
+    <updatePolicy>never</updatePolicy>
+  </releases>
+</pluginRepository>
+
+
+	
+		
+		
 	</pluginRepositories>
 	<repositories>
 		<repository>
@@ -258,7 +278,7 @@
 			<artifactId>astah-api</artifactId>
 			<version>${astah.version}</version>
 			<scope>system</scope>
-			<systemPath>C:/Program Files/astah-UML/astah-api.jar</systemPath>
+			<systemPath>${basedir}/astah-api.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>

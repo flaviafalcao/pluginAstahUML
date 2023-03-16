@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Astah-Edition: all
 Astah-Version: 6.7
-Bnd-LastModified: 1677528158861
+Bnd-LastModified: 1678935155128
 Build-Jdk: 1.8.0_331
 Built-By: flavi
 Bundle-Activator: plugin.Activator

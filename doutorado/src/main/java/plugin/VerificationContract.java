@@ -2,6 +2,7 @@ package plugin;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,6 +11,13 @@ import java.util.Iterator;
 public class VerificationContract {
 
 	// funcao que retorna assertivas de i/o process
+	
+	
+	// CRIAR ARQUIVO
+		//acesso pasta local do seu projeto
+		public static final String USER_DIR = System.getProperty("user.home");
+		//separador de arquivos '\' ou '/' dependendo do Sistema Operacional
+		public static final String SEPARATOR = System.getProperty("file.separator");
 
 	/**
 	 * I/O Process CSP assertions
@@ -79,9 +87,21 @@ public class VerificationContract {
 
 		FileWriter arquivo;
 		String str = "";
+		String arquivo_name;
 		try {
+			
+			//			
+		     File dir = new File(USER_DIR + SEPARATOR + "CSP");
+				  if (!dir.exists()) {
+					  Files.createDirectory(dir.toPath());
+			 }
+			//
+			
+		   arquivo_name =  "auxiliar_" + name + ".csp";
+				  
 			arquivo = new FileWriter(new File(
-					"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "auxiliar_" + name + ".csp"));
+					//"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "auxiliar_" + name + ".csp"));
+					dir,arquivo_name));
 
 			String chan = chan(name);
 			str = "---------------------------------------------------------\n" + "-- Side Condition FUNCTIONS --\n"
@@ -173,20 +193,29 @@ public class VerificationContract {
 	public void functionAux() {
 
 		FileWriter arquivo;
-
 		String str = "";
-
 		try {
 
+			
+            //			
+		     File dir = new File(USER_DIR + SEPARATOR + "CSP");
+				  if (!dir.exists()) {
+					  Files.createDirectory(dir.toPath());
+			 }
+			//
+		 	
 			boolean exists = (new File(
-					"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "function_aux.csp")).exists();
+					//"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "function_aux.csp")).exists();
+					dir + SEPARATOR +  "function_aux.csp")).exists();
+					
 			if (exists) {
 
 				System.out.println("existe");
 			}
 			{
 				arquivo = new FileWriter(
-						new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "function_aux.csp"));
+						//new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "function_aux.csp"));
+						new File(dir,"function_aux.csp"));
 
 				str = "--------------------------------------------------------------------\n"
 						+ "--------------------------------------------------------------------\n"

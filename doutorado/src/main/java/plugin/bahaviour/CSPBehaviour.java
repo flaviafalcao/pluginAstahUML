@@ -24,15 +24,18 @@ public class CSPBehaviour {
 		try {
 
 			boolean exists = (new File(
-					"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "BehaviourRestrictionResourceAllocation.csp")).exists();
+					//"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "BehaviourRestrictionResourceAllocation.csp")).exists();
+					"/CSP/" + "BehaviourRestrictionResourceAllocation.csp")).exists();
+			
 			if (exists) {
 
 				System.out.println("existe");
 			}
 			{
 				arquivo = new FileWriter(
-						new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "BehaviourRestrictionResourceAllocation.csp"));
-
+						//new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "BehaviourRestrictionResourceAllocation.csp"));
+						new File("/CSP/" + "BehaviourRestrictionResourceAllocation.csp"));
+						
 				str = "--------------------------------------------------------------------\n"
 						+ "-----------------------------------------------\r\n"
 						+ "-- Behavioural Specification Resource allocation\r\n"
