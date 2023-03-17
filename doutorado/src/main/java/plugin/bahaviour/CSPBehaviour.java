@@ -3,6 +3,7 @@ package plugin.bahaviour;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 import plugin.Declarations;
@@ -13,6 +14,12 @@ public class CSPBehaviour {
 	
 	/// criar CSP para verificar padrao de comportamento
 	
+	// CRIAR ARQUIVO
+			//acesso pasta local do seu projeto
+	public static final String USER_DIR = System.getProperty("user.home");
+			//separador de arquivos '\' ou '/' dependendo do Sistema Operacional
+	public static final String SEPARATOR = System.getProperty("file.separator");
+	
 	
 	public void BehaviourRestrictionResourceAllocation() {
 		
@@ -20,12 +27,22 @@ public class CSPBehaviour {
 		FileWriter arquivo;
 
 		String str = "";
+		
 
 		try {
+			
+			//			
+		     File dir = new File(USER_DIR + SEPARATOR + "CSP");
+				  if (!dir.exists()) {
+					  Files.createDirectory(dir.toPath());
+			 }
+			//
+		
+			
 
 			boolean exists = (new File(
 					//"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "BehaviourRestrictionResourceAllocation.csp")).exists();
-					"/CSP/" + "BehaviourRestrictionResourceAllocation.csp")).exists();
+					dir , "BehaviourRestrictionResourceAllocation.csp")).exists();
 			
 			if (exists) {
 
@@ -34,7 +51,7 @@ public class CSPBehaviour {
 			{
 				arquivo = new FileWriter(
 						//new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "BehaviourRestrictionResourceAllocation.csp"));
-						new File("/CSP/" + "BehaviourRestrictionResourceAllocation.csp"));
+						new File(dir, "BehaviourRestrictionResourceAllocation.csp"));
 						
 				str = "--------------------------------------------------------------------\n"
 						+ "-----------------------------------------------\r\n"
@@ -274,12 +291,19 @@ public class CSPBehaviour {
 				 
 			 }
 			 
-			 
+//				
+		     File dir = new File(USER_DIR + SEPARATOR + "CSP");
+				  if (!dir.exists()) {
+					  Files.createDirectory(dir.toPath());
+			 }
+			//
+		
 			 	
 				
 				
 				arquivo = new FileWriter(
-						new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "BehaviourRestrictionVerification.csp"));
+						//new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "BehaviourRestrictionVerification.csp"));
+						new File(dir, "BehaviourRestrictionVerification.csp"));
 
 				str = "--------------------------------------------------------------------\n"
 						+ str_r +"\n "

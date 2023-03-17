@@ -440,7 +440,9 @@ public class Principal {
 							porta = protocolNames.get(l).getPortName();
 
 							trace_lts = lts.protocolo(
-									"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + filemodelo,
+							//		"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + filemodelo,
+									USER_DIR +SEPARATOR+ "CSP" +SEPARATOR + filemodelo,
+
 									protocolName, porta);
 
 							String protocolId = "";
@@ -468,9 +470,9 @@ public class Principal {
 					String fileName = "arquivo_protocolo" + declaration.getNum();
 
 					arquivo2 = new FileWriter(new File(
-							"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + fileName + ".csp"));
-					// "C:/Users/flavi/git/pluginAstahUML/doutorado/src/main/resources/" + fileName
-					// + ".csp"));
+					//		"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + fileName + ".csp"));
+				           dir,	fileName + ".csp"));
+					
 					write2 = write2 + map;
 					// monta protocolo
 
@@ -492,7 +494,8 @@ public class Principal {
 					for (String assertion : assertions) {
 
 						check = checkRefinement(
-								"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + assertion);
+								//"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + assertion);
+						        USER_DIR + SEPARATOR + "CSP" +SEPARATOR + assertion);
 
 
 											
@@ -629,7 +632,7 @@ public class Principal {
 		
 		check = checkRefinementIO(
 			//	"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + "BehaviourRestrictionVerification.csp");
-		 dir + SEPARATOR+ "BehaviourRestrictionVerification.csp");
+		 USER_DIR + SEPARATOR+ "CSP" + SEPARATOR+ "BehaviourRestrictionVerification.csp");
 		
 				
 		

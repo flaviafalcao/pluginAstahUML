@@ -28,6 +28,12 @@ public class CompositeView {
 
 	private ProjectAccessor projectAccessor;
 	ICompositeStructureDiagram compositeStructureDiagram;
+	
+	// CRIAR ARQUIVO
+		//acesso pasta local do seu projeto
+		public static final String USER_DIR = System.getProperty("user.home");
+		//separador de arquivos '\' ou '/' dependendo do Sistema Operacional
+		public static final String SEPARATOR = System.getProperty("file.separator");
 
 	public CompositeView() {
 		try {
@@ -702,7 +708,9 @@ public class CompositeView {
 	public static void main(String[] args) {
 		try {
 			CompositeView c = new CompositeView(
-					"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/modelo.asta");
+				//	"C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/modelo.asta");
+		USER_DIR + SEPARATOR + "CSP" + SEPARATOR + "modelo.asta");
+
 
 			INamedElement[] foundElements = c.findComposite();
 			ICompositeStructureDiagram compositeStructureDiagram;

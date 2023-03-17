@@ -13,6 +13,13 @@ import com.change_vision.jude.api.inf.model.IConnector;
 import com.change_vision.jude.api.inf.model.IPort;
 
 public class Composition {
+	
+	// CRIAR ARQUIVO
+		//acesso pasta local do seu projeto
+		public static final String USER_DIR = System.getProperty("user.home");
+		//separador de arquivos '\' ou '/' dependendo do Sistema Operacional
+		public static final String SEPARATOR = System.getProperty("file.separator");
+		
 
 	private static ArrayList<ProcessoInterleave> interleaves = new ArrayList<ProcessoInterleave>();
 
@@ -476,7 +483,9 @@ public class Composition {
 			write = write + assertion_interleave;
 
 			arquivo = new FileWriter(
-					new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + filename));
+					//new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + filename));
+					new File(USER_DIR + SEPARATOR +  "CSP"+ SEPARATOR + filename));
+			
 			arquivo.write(write);
 			arquivo.flush();
 			arquivo.close();
@@ -565,7 +574,9 @@ public class Composition {
 									+ assertion3 + assertion4;
 
 					arquivo = new FileWriter(
-							new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + filename));
+							//new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + filename));
+							new File(USER_DIR + SEPARATOR + "CSP" + SEPARATOR+ filename));
+					
 					arquivo.write(write);
 					arquivo.flush();
 					arquivo.close();
@@ -635,7 +646,9 @@ public class Composition {
 					assertConn.add(ac);
 
 					arquivo = new FileWriter(
-							new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + filename));
+						//	new File("C:/Users/flavi/Documents/Doutorado_2022/PLUGIN/CSP/" + filename));
+							new File(USER_DIR + SEPARATOR + "CSP" + SEPARATOR +filename));
+					
 					arquivo.write(write);
 					arquivo.flush();
 					arquivo.close();
