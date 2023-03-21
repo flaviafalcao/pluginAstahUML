@@ -132,7 +132,8 @@ public class FDR3LocationDialog extends JDialog {
 					msg.setText("Please select a valid folder!");
 				} else {
 					String filename = null;
-					if (System.getProperty("os.name").startsWith("Mac OS X")) {
+					//if (System.getProperty("os.name").startsWith("Mac OS X")) {
+					if ((System.getProperty("os.name").toLowerCase()).indexOf("mac")>0) {							
 						filename = tf.getText() + "/Contents/Frameworks/fdr.jar";
 
 					} else if (System.getProperty("os.name").contains("Win")) {
