@@ -134,12 +134,14 @@ public class FDR3LocationDialog extends JDialog {
 					String filename = null;
 					//if (System.getProperty("os.name").startsWith("Mac OS X")) {
 					if ((System.getProperty("os.name").toLowerCase()).indexOf("mac")>0) {							
-						filename = tf.getText() + "/Contents/Frameworks/fdr.jar";
+					  filename = tf.getText() + "/Contents/Frameworks/fdr.jar";
 
 					} else if (System.getProperty("os.name").contains("Win")) {
 						filename = tf.getText() + "\\bin\\fdr.jar";
 					}else {
-						filename = tf.getText() + "/lib/fdr.jar";
+					//	filename = tf.getText() + "/lib/fdr.jar";
+						
+						filename = tf.getText() + "fdr.jar";
 					}
 					File fdrlib = new File(filename);
 					if (!fdrlib.exists()) {
