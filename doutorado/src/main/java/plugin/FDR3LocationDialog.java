@@ -36,6 +36,8 @@ public class FDR3LocationDialog extends JDialog {
 	public static final String FDR3_PROPERTY_FILE = "plugin.properties";
 	public static final String FDR3_LOCATION_PROPERTY = "fdr3_location";
 	public static final String FDR3_JAR_LOCATION_PROPERTY = "fdr3_jar_location";
+	public static final String SEPARATOR = System.getProperty("file.separator");
+	
 
 	private JTextField tf;
 	private JButton findButton;
@@ -67,7 +69,7 @@ public class FDR3LocationDialog extends JDialog {
 			prop.load(new FileInputStream(propertyFile));
 		}
 		initComponents();
-		this.setTitle("FDR3 Location");
+		this.setTitle("FDR4 Location");
 		this.setLocation(new Point(276, 182));
 		this.setSize(new Dimension(450, 150));
 		this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
@@ -82,7 +84,7 @@ public class FDR3LocationDialog extends JDialog {
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 
-		add(new JLabel("FDR3 folder:"), gbc);
+		add(new JLabel("FDR4 folder:"), gbc);
 		gbc.gridx++;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 100;
@@ -133,16 +135,17 @@ public class FDR3LocationDialog extends JDialog {
 				} else {
 					String filename = null;
 					//if (System.getProperty("os.name").startsWith("Mac OS X")) {
-					if ((System.getProperty("os.name").toLowerCase()).indexOf("mac")>0) {							
-					  filename = tf.getText() + "/Contents/Frameworks/fdr.jar";
+					//if ((System.getProperty("os.name").toLowerCase()).indexOf("mac")>0) {							
+					//  filename = tf.getText() + "/Contents/Frameworks/fdr.jar";
 
-					} else if (System.getProperty("os.name").contains("Win")) {
-						filename = tf.getText() + "\\bin\\fdr.jar";
-					}else {
+				 //	} else if (System.getProperty("os.name").contains("Win")) {
+						//filename = tf.getText() + "\\bin\\fdr.jar";
+					//}else {
 					//	filename = tf.getText() + "/lib/fdr.jar";
 						
-						filename = tf.getText() + "fdr.jar";
-					}
+						filename = tf.getText() +  SEPARATOR + "fdr.jar";
+					//}
+						msg.setText(filename);
 					File fdrlib = new File(filename);
 					if (!fdrlib.exists()) {
 						msg.setText("Library fdr.jar not found!");

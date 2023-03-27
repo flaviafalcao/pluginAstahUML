@@ -528,57 +528,161 @@ public class ClassView { // {
 		try {
 			Declarations declaration = Declarations.getInstance();
 			ArrayList<Operation> classOperation;
-			HashSet<Operation> interfaceOperation;
+			HashSet<Operation> interfaceOperation_prov =new HashSet<Operation>();
+			HashSet<Operation> interfaceOperation_req =new HashSet<Operation>();
 
 			// nome das classes
 			IModel iCurrentProject = projectAccessor.getProject();
 			getAllClasses(iCurrentProject, classeList);
-			String texto = "";
-
+			String texto = "";			
+			Iterator it_req;
 			Iterator iclassList = classeList.iterator();
 
 			while (iclassList.hasNext()) {
+				
+				texto ="";
 				IClass tempClass = (IClass) iclassList.next();
-				interfaceOperation = new HashSet<Operation>();
+				
 				classOperation = declaration.getClassOperation(tempClass.getName());
-
+				
 				// recuperar as operacoes de suas interfaces
 
 				if (tempClass.getPorts().length > 0) {
 
 					// retirar as portas env aqui
 
-					IPort[] temp_port = tempClass.getPorts();
-
+					IPort[] temp_port = tempClass.getPorts();  
+					
+					
+//para cada porta
 					for (int k = 0; k < temp_port.length; k++) {
-						// required
+					
+						
+						//  se porta required						
 						if (getTypeInterface(temp_port[k]) == 1) {
 
 							IClass interfaces[] = temp_port[k].getRequiredInterfaces();
 
 							for (int m = 0; m < interfaces.length; m++) {
-								ArrayList<Operation> interfaceOp = declaration
-										.getClassOperation(interfaces[m].getName());
+								ArrayList<Operation> interfaceOp = declaration.getClassOperation(interfaces[m].getName());
 
 								for (int n = 0; n < interfaceOp.size(); n++) {
-									interfaceOperation.add(interfaceOp.get(n));
+									interfaceOperation_req.add(interfaceOp.get(n));
 								}
 							}
-						}
+							
+							//required
+							it_req = interfaceOperation_req.iterator();
+							while (it_req.hasNext()) {
+								classOperation.add((Operation) it_req.next());
+							}
+
+	
+							if (classOperation.size() > 0) {
+								
+								ArrayList<Operation> op = classOperation;
+
+								if (!(tempClass.getStereotypes()[0].equalsIgnoreCase("interface"))) {
+									ArrayList<String> ops = new ArrayList<String>();
+									
+									texto = tempClass.getName();
+									stringI = stringI + "subtype " + texto + "_I = ";
+									
+
+									for (int j = 0; j < op.size(); j = j + 1) {
+
+										if (!op.get(j).getEsteriotipo().trim().equalsIgnoreCase("async")) {
+
+											// verificar se ha direcao
+											if (!op.get(j).getDirection().isEmpty()) {
+
+												String direction = op.get(j).getDirection();
+
+												// nao eh sync
+
+												if (direction.equalsIgnoreCase("in")) {
+
+													ops.add(op.get(j).getName_out()); // + "." + op.get(j).getParamName());
+												}
+
+												else {
+
+													ops.add(op.get(j).getName_out()+ "." + op.get(j).getParamName());;
+
+												}
+
+											}
+
+											else {
+
+												ops.add(op.get(j).getName_out());
+
+											}
+
+										}
+
+										else {
+
+											// verificar se ha direcao
+											if (!op.get(j).getDirection().isEmpty()) {
+
+												String direction = op.get(j).getDirection();
+
+												// nao eh sync
+
+												if (direction.equalsIgnoreCase("in")) {
+
+													ops.add(op.get(j).getName() + "." + op.get(j).getParamName());
+												}
+
+											}
+
+											else {
+
+												ops.add(op.get(j).getName());
+
+											}
+
+										}
+
+									}
+
+									for (int kk = 0; kk < ops.size(); kk++) {
+
+										stringI = stringI + ops.get(kk);
+
+										if (kk != (ops.size() - 1)) {
+											stringI = stringI + " | ";
+										}
+
+									}
+
+									//stringI = stringI + "\n";
+								}
+							}
+							
+					}//req
+						
+						
+						//prov
+						interfaceOperation_prov =new HashSet<Operation>();
+						
 						if (getTypeInterface(temp_port[k]) == 0) {
-							// provide
+							// se  provide
 							IClass interfaces[] = temp_port[k].getProvidedInterfaces();
 							for (int m = 0; m < interfaces.length; m++) {
 								ArrayList<Operation> interfaceOp = declaration
 										.getClassOperation(interfaces[m].getName());
 
 								for (int n = 0; n < interfaceOp.size(); n++) {
-									interfaceOperation.add(interfaceOp.get(n));
+									interfaceOperation_prov.add(interfaceOp.get(n));
 								}
 							}
 						}
-					}
-					Iterator it = interfaceOperation.iterator();
+					
+					
+					Iterator it = interfaceOperation_prov.iterator();
+					classOperation = new ArrayList<Operation>();
 					while (it.hasNext()) {
 						classOperation.add((Operation) it.next());
 					}
@@ -589,8 +693,13 @@ public class ClassView { // {
 						ArrayList<Operation> op = classOperation;
 
 						if (!(tempClass.getStereotypes()[0].equalsIgnoreCase("interface"))) {
+							
+							if( texto.trim().length()==0) {
 							texto = tempClass.getName();
 							stringI = stringI + "subtype " + texto + "_I = ";
+							} else {
+								stringI = stringI + "|";
+							}
 							ArrayList<String> ops = new ArrayList<String>();
 
 							for (int j = 0; j < op.size(); j = j + 1) {
@@ -610,9 +719,7 @@ public class ClassView { // {
 										}
 
 										else {
-
 											ops.add(op.get(j).getName_in());
-
 										}
 
 									}
@@ -620,7 +727,6 @@ public class ClassView { // {
 									else {
 
 										ops.add(op.get(j).getName_in());
-
 									}
 
 								}
@@ -651,20 +757,25 @@ public class ClassView { // {
 
 							}
 
-							for (int k = 0; k < ops.size(); k++) {
+							for (int km = 0; km < ops.size(); km++) {
 
-								stringI = stringI + ops.get(k);
+								stringI = stringI + ops.get(km);
 
-								if (k != (ops.size() - 1)) {
+								if (km != (ops.size() - 1)) {
 									stringI = stringI + " | ";
 								}
 
 							}
 
-							stringI = stringI + "\n";
+							//stringI = stringI + "\n";
 						}
+						
+						
 					}
+					
+					} 
 				}
+				stringI = stringI + "\n";
 			}
 
 		} catch (Exception e) {
@@ -702,7 +813,7 @@ public class ClassView { // {
 
 	// ----------------------------------------------------
 
-	public String to_StringOpO() {
+/*	public String to_StringOpO() {
 		String stringO = "";
 		boolean sep = false;
 		try {
@@ -759,7 +870,6 @@ public class ClassView { // {
 					Iterator it = interfaceOperation.iterator();
 					while (it.hasNext()) {
 						classOperation.add((Operation) it.next());
-						// System.out.println("while" + classOperation.size());
 					}
 
 					if (classOperation.size() > 0) {
@@ -845,7 +955,273 @@ public class ClassView { // {
 
 		return stringO;
 
+	}*/
+	
+	
+	
+	public String to_StringOpO() {
+		String stringO = "";
+
+		try {
+			Declarations declaration = Declarations.getInstance();
+			ArrayList<Operation> classOperation;
+			HashSet<Operation> interfaceOperation_prov =new HashSet<Operation>();
+			HashSet<Operation> interfaceOperation_req =new HashSet<Operation>();
+
+			// nome das classes
+			IModel iCurrentProject = projectAccessor.getProject();
+			getAllClasses(iCurrentProject, classeList);
+			String texto = "";			
+			Iterator it_req;
+			Iterator iclassList = classeList.iterator();
+
+			while (iclassList.hasNext()) {
+				
+				texto ="";
+				IClass tempClass = (IClass) iclassList.next();
+				
+				classOperation = declaration.getClassOperation(tempClass.getName());
+				
+				// recuperar as operacoes de suas interfaces
+
+				if (tempClass.getPorts().length > 0) {
+
+					// retirar as portas env aqui
+
+					IPort[] temp_port = tempClass.getPorts();  
+					
+					
+//para cada porta
+					for (int k = 0; k < temp_port.length; k++) {
+					
+						
+						//  se porta required						
+						if (getTypeInterface(temp_port[k]) == 1) {
+
+							IClass interfaces[] = temp_port[k].getRequiredInterfaces();
+
+							for (int m = 0; m < interfaces.length; m++) {
+								ArrayList<Operation> interfaceOp = declaration.getClassOperation(interfaces[m].getName());
+
+								for (int n = 0; n < interfaceOp.size(); n++) {
+									interfaceOperation_req.add(interfaceOp.get(n));
+								}
+							}
+							
+							//required
+							it_req = interfaceOperation_req.iterator();
+							while (it_req.hasNext()) {
+								classOperation.add((Operation) it_req.next());
+							}
+
+	
+							if (classOperation.size() > 0) {
+								
+								ArrayList<Operation> op = classOperation;
+
+								if (!(tempClass.getStereotypes()[0].equalsIgnoreCase("interface"))) {
+									ArrayList<String> ops = new ArrayList<String>();
+									
+									texto = tempClass.getName();
+									stringO = stringO + "subtype " + texto + "_O = ";
+									
+
+									for (int j = 0; j < op.size(); j = j + 1) {
+
+										if (!op.get(j).getEsteriotipo().trim().equalsIgnoreCase("async")) {
+
+											// verificar se ha direcao
+											if (!op.get(j).getDirection().isEmpty()) {
+
+												String direction = op.get(j).getDirection();
+
+												// nao eh sync
+
+												if (direction.equalsIgnoreCase("out")) {
+
+													ops.add(op.get(j).getName_in()); // + "." + op.get(j).getParamName());
+												}
+
+												else {
+
+													ops.add(op.get(j).getName_in()+ "." + op.get(j).getParamName());;
+
+												}
+
+											}
+
+											else {
+
+												ops.add(op.get(j).getName_in());
+
+											}
+
+										}
+
+										else {
+
+											// verificar se ha direcao
+											if (!op.get(j).getDirection().isEmpty()) {
+
+												String direction = op.get(j).getDirection();
+
+												// nao eh sync
+
+												if (direction.equalsIgnoreCase("out")) {
+
+													ops.add(op.get(j).getName() + "." + op.get(j).getParamName());
+												}
+
+											}
+
+											else {
+
+												ops.add(op.get(j).getName());
+
+											}
+
+										}
+
+									}
+
+									for (int kk = 0; kk < ops.size(); kk++) {
+
+										stringO = stringO + ops.get(kk);
+
+										if (kk != (ops.size() - 1)) {
+											stringO = stringO + " | ";
+										}
+
+									}
+
+									//stringI = stringI + "\n";
+								}
+							}
+							
+					}//req
+						
+						
+						//prov
+						interfaceOperation_prov =new HashSet<Operation>();
+						
+						if (getTypeInterface(temp_port[k]) == 0) {
+							// se  provide
+							IClass interfaces[] = temp_port[k].getProvidedInterfaces();
+							for (int m = 0; m < interfaces.length; m++) {
+								ArrayList<Operation> interfaceOp = declaration
+										.getClassOperation(interfaces[m].getName());
+
+								for (int n = 0; n < interfaceOp.size(); n++) {
+									interfaceOperation_prov.add(interfaceOp.get(n));
+								}
+							}
+						}
+					
+					
+					Iterator it = interfaceOperation_prov.iterator();
+					classOperation = new ArrayList<Operation>();
+					while (it.hasNext()) {
+						classOperation.add((Operation) it.next());
+					}
+
+					//////////////////////////////////////
+
+					if (classOperation.size() > 0) {
+						ArrayList<Operation> op = classOperation;
+
+						if (!(tempClass.getStereotypes()[0].equalsIgnoreCase("interface"))) {
+							
+							if( texto.trim().length()==0) {
+							texto = tempClass.getName();
+							stringO = stringO + "subtype " + texto + "_O = ";
+							} else {
+								stringO = stringO + "|";
+							}
+							ArrayList<String> ops = new ArrayList<String>();
+
+							for (int j = 0; j < op.size(); j = j + 1) {
+
+								if (!op.get(j).getEsteriotipo().trim().equalsIgnoreCase("async")) {
+
+									// verificar se ha direcao
+									if (!op.get(j).getDirection().isEmpty()) {
+
+										String direction = op.get(j).getDirection();
+
+										// nao eh sync
+
+										if (direction.equalsIgnoreCase("out")) {
+
+											ops.add(op.get(j).getName_out() + "." + op.get(j).getParamName());
+										}
+
+										else {
+											ops.add(op.get(j).getName_out());
+										}
+
+									}
+
+									else {
+
+										ops.add(op.get(j).getName_out());
+									}
+
+								}
+
+								else {
+
+									// verificar se ha direcao
+									if (!op.get(j).getDirection().isEmpty()) {
+
+										String direction = op.get(j).getDirection();
+
+										// nao eh sync
+
+										if (direction.equalsIgnoreCase("out")) {
+
+											ops.add(op.get(j).getName() + "." + op.get(j).getParamName());
+										}
+
+									}
+
+									else {
+
+										ops.add(op.get(j).getName());
+
+									}
+
+								}
+
+							}
+
+							for (int km = 0; km < ops.size(); km++) {
+
+								stringO = stringO + ops.get(km);
+
+								if (km != (ops.size() - 1)) {
+									stringO = stringO + " | ";
+								}
+
+							}
+
+							//stringI = stringI + "\n";
+						}
+						
+						
+					}
+					
+					} 
+				}
+				stringO = stringO + "\n";
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return stringO;
 	}
+
 
 	protected void getAllClasses(INamedElement element, HashSet<IClass> classList)
 			throws ClassNotFoundException, ProjectNotFoundException {

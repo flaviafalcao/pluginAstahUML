@@ -62,22 +62,6 @@ public class Principal {
 		
 
 		try {
-
-		//	long tempoInicial1 = System.currentTimeMillis();
-			
-		//	System.out.println("----------Leader ---------------");
-			
-		//	checkRefinement(
-		//			"C:/Users/flavi/eclipse-workspace/CorTeste/src/main/resources/modelo_LSE_2.csp");
-			
-		//	long tempofinal2 = System.currentTimeMillis() - tempoInicial1;
-			
-		//	System.out.printf("%.3f ms%n",  tempofinal2/ 1000d);
-			
-		//	System.out.println("");
-			
-		//	System.out.println("----------Leader---------------");
-			
 			
 			conditions.resetMessage(); // reseta todas as mensagens
 

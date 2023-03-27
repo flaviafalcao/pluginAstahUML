@@ -406,6 +406,9 @@ public class FdrWrapper {
 			// machine
 			machine = invokeProperty(behaviourClass, behaviour, "machine", null, null);
 
+			
+			describeBehaviour(behaviour);
+			
 			// trace que contem a divergencia
 			for (Long event : (Iterable<Long>) invokeProperty(behaviourClass, behaviour, "trace", null, null)) {
 				Object result = invokeProperty(sessionClass, this.session, "uncompileEvent", long.class, event);
@@ -502,12 +505,14 @@ public class FdrWrapper {
 
 			for (Long event : (Iterable<Long>) invokeProperty(behaviourClass, behaviour, "trace", null, null)) {
 				Object result = invokeProperty(sessionClass, this.session, "uncompileEvent", long.class, event);
-				sb.append(result.toString() + " ,  ");
+				sb.append(result.toString() + ",");
 
 			}
 
-			System.out.println(sb.toString());
-			retorno = sb.toString();
+			System.out.println("deadlock -->" + describeBehaviour(behaviour));
+			System.out.println("deadlock" + sb.toString());
+			//retorno = sb.toString();
+			retorno = describeBehaviour(behaviour);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

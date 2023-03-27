@@ -83,7 +83,7 @@ public class CounterExampleSD {
 			List<INodePresentation> myLifelines = CreateLifelines(project, de);
 
 			// create messages, combinedFragment, interactionUse, stateInvariant
-			CreateMessages(de, myLifelines);
+		 	CreateMessages(de, myLifelines);
 
 			TransactionManager.endTransaction();
 			projectAccessor.save();
@@ -138,9 +138,25 @@ public class CounterExampleSD {
 		}
 
 		double position = 0;
+		
+		INodePresentation objPs2 = de.createLifeline("Enviroment", position);
+		ILifeline lifeline2 = (ILifeline) objPs2.getModel();
+		//String boundary = declaration.getTypeInstance(lf);
+
+	  //	System.out.println("boundary ------------" + boundary);
+		//IClass boundaryclass = findNamedElement(findBasicComponentClass(), boundary, IClass.class);
+		// com o nome da instancia recupero o tipo do componente
+	    //lifeline1.setBase(new class()); // seta o tipo da lifeLine
+		
+		lifeline2.setTypeModifier("actor");
+		position = position + 200;
+		myLifelines.add(objPs2);
+
+		
+		
 		for (String lf : lifelineBases) {
 
-			//System.out.println("lifelineBases---name :   " + lf);
+			System.out.println("lifelineBases---name :   " + lf);
 
 			INodePresentation objPs1 = de.createLifeline(lf, position);
 			ILifeline lifeline1 = (ILifeline) objPs1.getModel();
@@ -154,7 +170,8 @@ public class CounterExampleSD {
 			myLifelines.add(objPs1);
 		}
 
-	
+
+			
 
 		return myLifelines;
 	}
@@ -249,17 +266,40 @@ public class CounterExampleSD {
 				String instanceName = declaration.getInstanceNameByTypeId(nomeComponente, id);
 
 				lifeLine1 = instanceName;
-
-				String porta_sinc = semOp[0].trim() + "." + semOp[1].trim();
+				
+				String porta_sinc;
+				if(semOp.length>2) {
+					
+					porta_sinc = semOp[0].trim() + "." + semOp[1].trim()+ "." + semOp[2].trim();
+					
+				}
+				else {
+				     porta_sinc = semOp[0].trim() + "." + semOp[1].trim();
+				}
 
 				String target;
 				String instanceNameb = "";
-
+				
+				String channel1;
+				String str1[];
+				String channel2;
+				String str2[];
 				for (int i = 0; i < setsinc.size(); i++) {
+					
+					//str1 =setsinc.get(i).getChannel1().split("\\.");						  
+				    //channel1 = str1[0] + "."+ str1[1];
+				    
+				    //str2 =setsinc.get(i).getChannel2().split("\\.");						  
+				    //channel2 = str2[0] + "." +str2[1];
+					
+						 
 
-					if (porta_sinc.equalsIgnoreCase(setsinc.get(i).getChannel1())) {
-
+				  if (porta_sinc.equalsIgnoreCase(setsinc.get(i).getChannel1())) {
+					//if (porta_sinc.equalsIgnoreCase(channel1)) {
+ 
+				    
 						target = setsinc.get(i).getChannel2();
+						//target =channel2;
 						String semOp_b[] = target.split("\\.");
 
 						// saber qual o tipo componente da porta
@@ -271,9 +311,15 @@ public class CounterExampleSD {
 						break;
 					}
 
-					if (porta_sinc.equalsIgnoreCase(setsinc.get(i).getChannel2())) {
+					
+					
+   			if (porta_sinc.equalsIgnoreCase(setsinc.get(i).getChannel2())) {
+					//if (porta_sinc.equalsIgnoreCase(channel2)) {
+
 
 						target = setsinc.get(i).getChannel1();
+						///target = channel1;
+						
 						String semOp_b[] = target.split("\\.");
 
 						// saber qual o tipo componente da porta
@@ -311,11 +357,22 @@ public class CounterExampleSD {
 				// apresentar apenas as operacoes
 
 				String msg_str[] = msg.split("\\.");
+				
 				msg = msg_str[2].trim();
 
+				if(msg.length()==1) {
+					
+					msg = msg_str[3].trim();
+				}
+				
+				// se a op é in ou  out
+				
+			    
 				// se n contem ack
-				if ((!msg.contains("_O")) && (req_prov == 1))
+				if ((!msg.contains("_O"))
+						&& (req_prov == 1))
 				// e eh o componente pertencente eh um required -- ver a porta
+				
 				{
 					String porta_other = declaration.getOtherChannelSinc(porta_sinc);
 
@@ -328,10 +385,21 @@ public class CounterExampleSD {
 					msg = msgTemp;
 
 					String msg_ack = porta_other + "." + msg + "_O";
+			
+				  
+					ILinkPresentation msgSD;
+					
+					if(result[1] == -1)
+					{
+						msgSD = de.createMessage(msg, myLifelines.get(result[0]),
+								myLifelines.get(0), position);
+					}else {
+					
 
-					ILinkPresentation msgSD = de.createMessage(msg, myLifelines.get(result[0]),
+					    msgSD = de.createMessage(msg, myLifelines.get(result[0]),
 							myLifelines.get(result[1]), position);
 
+					}
 					// tem o par da comunicacao
 
 					boolean temack = false;
@@ -350,7 +418,14 @@ public class CounterExampleSD {
 					if (temack) {
 						de.createReturnMessage("ack", msgSD);
 					}
-				}
+				} //
+				
+				// se env
+				String strOp[] = msg.split("\\_");
+			    Operation op = declaration.opByName(strOp[0]); 
+				
+			  //  String steriotipo = op.getEsteriotipo();
+				
 
 			}
 
@@ -469,4 +544,7 @@ public class CounterExampleSD {
 
 	}
 
+	class Actor{}
+	
+	
 }
