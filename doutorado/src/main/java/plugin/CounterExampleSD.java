@@ -421,11 +421,60 @@ public class CounterExampleSD {
 				} //
 				
 				// se env
-				String strOp[] = msg.split("\\_");
-			    Operation op = declaration.opByName(strOp[0]); 
 				
-			  //  String steriotipo = op.getEsteriotipo();
+			    Operation op = declaration.opByName(msg); 
 				
+			    
+				if ( op!=null && op.getModifier().trim().equalsIgnoreCase("env")) {
+					
+				String porta_other = declaration.getOtherChannelSinc(porta_sinc);
+
+					// ha mesnagem no trace do contraexmplo
+
+					// retirar o string "_I"
+
+					String msgTemp = msg.replace("_I", "");
+
+					msg = msgTemp;
+
+					String msg_ack = porta_other + "." + msg + "_O";
+			
+				  
+					ILinkPresentation msgSD;
+					
+					//if(result[1] == -1)
+					//{
+						msgSD = de.createMessage(msg, 
+								myLifelines.get(0), myLifelines.get(result[0]), position);
+					//}else {
+					
+
+					  //  msgSD = de.createMessage(msg, myLifelines.get(result[0]),
+						//	myLifelines.get(result[1]), position);
+
+					//}
+					// tem o par da comunicacao
+
+					boolean temack = false;
+
+					// verificar se a mensagem ack faz parte do trace
+
+					for (int m = 0; m < traceDeadlockArray.length; m++) {
+						if ((traceDeadlockArray[m].trim()).equalsIgnoreCase(msg_ack)) {
+
+							temack = true;
+							break;
+						}
+
+					}
+
+					if (temack) {
+						de.createReturnMessage("ack", msgSD);
+					}
+
+					
+				}
+					
 
 			}
 
