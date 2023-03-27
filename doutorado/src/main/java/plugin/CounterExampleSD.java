@@ -421,6 +421,10 @@ public class CounterExampleSD {
 				} //
 				
 				// se env
+				//String msgTemp2 ="";
+				if(msg.endsWith("_I")){
+					msg = msg.replace("_I", "");
+				}
 				
 			    Operation op = declaration.opByName(msg); 
 				
