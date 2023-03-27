@@ -406,8 +406,13 @@ public class CounterExampleSD {
 
 					// verificar se a mensagem ack faz parte do trace
 
+					String msgTemp2 = msg.replace("_I", "");
+					Operation op2 = declaration.opByName(msgTemp2); 
+						
+					if ( op2!=null && (!op2.getDirection().isEmpty())) { temack = true;}
+					
 					for (int m = 0; m < traceDeadlockArray.length; m++) {
-						if ((traceDeadlockArray[m].trim()).equalsIgnoreCase(msg_ack)) {
+						if ((traceDeadlockArray[m].trim()).equalsIgnoreCase(msg_ack))  {
 
 							temack = true;
 							break;
@@ -462,6 +467,8 @@ public class CounterExampleSD {
 					boolean temack = false;
 
 					// verificar se a mensagem ack faz parte do trace
+					
+					if ( op!=null && (!op.getDirection().isEmpty()) && (!op.getEsteriotipo().equalsIgnoreCase("async"))) { temack = true;}
 
 					for (int m = 0; m < traceDeadlockArray.length; m++) {
 						if ((traceDeadlockArray[m].trim()).equalsIgnoreCase(msg_ack)) {
