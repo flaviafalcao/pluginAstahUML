@@ -55,7 +55,7 @@ public class CounterExampleSD {
 		List<Object> counterExamples = wrapper2.getCounterExamples();
 		/// verifica se o contraexemplo eh contrea exemplide deadlock
 		List<Object> div = wrapper2.deadlockCounterExample(counterExamples);
-		String traceDeadlock = wrapper2.traceDeadlock(div.get(0));
+		String traceDeadlock = wrapper2.traceDeadlock(div.get(0)).trim();
 		traceDeadlockArray = this.splitContraexemplo(traceDeadlock);
 
 	}
@@ -420,7 +420,7 @@ public class CounterExampleSD {
 
 					}
 
-					if (temack) {
+					if ((temack) &&  (j < traceDeadlockArray.length -1)){
 						de.createReturnMessage("ack", msgSD);
 					}
 				} //
@@ -479,7 +479,7 @@ public class CounterExampleSD {
 
 					}
 
-					if (temack) {
+					if (temack)  {
 						de.createReturnMessage("ack", msgSD);
 					}
 
@@ -488,7 +488,8 @@ public class CounterExampleSD {
 					
 
 			}
-
+			
+			
 		}
 
 	}
